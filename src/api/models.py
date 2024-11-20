@@ -6,7 +6,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(180), unique=False, nullable=False)
-    salt = db.Column(db.String(180), nullable = False)
+    salt = db.Column(db.String(180), nullable = True) # cambiar a False
     avatar = db.Column(db.String(100), nullable = False, default = "https://i.pravatar.cc/300") # se guarda la referencia a la imagen    
     public_id_avatar = db.Column(db.String(100), nullable = True)
     created_at = db.Column(db.DateTime, nullable = False, default = datetime.now(timezone.utc))

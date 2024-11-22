@@ -28,7 +28,7 @@ def add_user():
     body_password = body.get("password", None)
     body_salt = body.get("salt", None)
 
-    if body_email is None or body_password is None or body_salt is None:
+    if body_email is None or body_password is None:
         return jsonify({"Mensaje": "Bad credentials"}), 400
 
     user = User(email = body_email, password = body_password, salt = body_salt)
@@ -50,18 +50,17 @@ def add_user():
 @api.route('/user/<int:user_id>', methods = ['PUT'])
 def update_user(user_id):
     body = request.json 
-    # body_email = body.get('email', None)
+    body_email = body.get('email', None)
     body_password = body.get("password", None)
     body_salt  = body.get("salt", None) # el usuario no debe tener acceso al salt 
 
-    if body_password is None or body_salt is None:
+    if body_password is None or body_email  is None:
         return jsonify({"Message": "Somethings is wrong with the credentials"}), 400
 
     user = User()
     # chequear si existe en la base de datos
-    # user = user.query.get(user_id)
-    user = user.query.filter_by(email = body_email).first()
-    # print(user)
+    user = user.query.get(user_id)
+    
 
     if user is None: 
         return jsonify({"Message":"User doenst exist"}), 404

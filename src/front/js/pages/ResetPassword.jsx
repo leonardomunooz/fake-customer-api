@@ -3,10 +3,7 @@ import { Context } from '../store/appContext';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2'
 
-const initialUser = {
-    "email": "",
-    "password": ""
-}
+const initialUser = { "email": "" }
 
 const ResetPassword = () => {
 
@@ -15,10 +12,20 @@ const ResetPassword = () => {
     const navigate = useNavigate()
 
     const handleChange = ({target}) => {
-      
+        setUser({
+            ...user,
+            [target.name]: target.value
+        })
+        
     }
     const handleSubmit = async (e) => {
-    
+        
+        if (user.email.trim()== ""){
+            console.log("No se pueden enviar elementos vacios") 
+            return
+        }else{
+            console.log('Programar funcionalidad')
+        }
     }
 
     return (

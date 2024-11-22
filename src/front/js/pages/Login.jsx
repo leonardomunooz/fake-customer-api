@@ -24,7 +24,12 @@ const Login = () => {
         })
     }
     const handleSubmit = async (e) => {
-    
+        if (user.email.trim() == "" || user.password.trim() == "" ){
+            console.log("No se pueden enviar elementos vacios") 
+            return 
+        }else{
+            console.log('Programar funcionalidad')
+        }
     }
 
     return (

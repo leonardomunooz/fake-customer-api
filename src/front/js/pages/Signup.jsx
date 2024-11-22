@@ -9,8 +9,8 @@ const initialUser = {
 const Signup = () =>{
 
     const [user,setUser] = useState(initialUser)
-    // const regex = /^\s*$/
-    // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+ 
     const handleChange = ({target}) => {
     
         setUser({
@@ -23,10 +23,13 @@ const Signup = () =>{
 
     const handleSubmit = () =>{
 
-    // const valdacion = emailRegex.test(user.email)
-        // console.log(valdacion);
-        
-    
+        if (user.email.trim() == "" || user.password.trim() == "" ){
+            console.log("No se pueden enviar elementos vacios") 
+            return
+        }else{
+            console.log('Programar funcionalidad')
+            console.log(user.email)
+        }
 
     }
 

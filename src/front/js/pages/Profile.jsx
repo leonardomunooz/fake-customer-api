@@ -11,9 +11,8 @@ export const Profile = () => {
                 
                     <h4 className="text-center mt-3"> 
                         <label htmlFor="apiKey"> Api Key : </label>
-                        <p className="d-inline-block border  p-1" id="apiKey" >AIzaSyDaGmWKa4JsXZ-HjGw7ISLn_3nSDAds4ewQe</p>
+                        <p className="d-inline-block border  p-1" id="apiKey" > AIzaSyDaGmWKa4JsXZ-HjGw7ISLn_3nSDAds4ewQe</p>
                     </h4>
-                  
                 </div>
         </div>
     )

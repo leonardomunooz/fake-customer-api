@@ -26,12 +26,12 @@ const ResetPassword = () => {
         <div className="container m-auto " style={{ "width": "600px" }}>
            <div className="row">
                 <h1 className='col-12 text-center mt-5'> ¿Olvidaste tu contrasena? </h1>
-                <p className='col-12 text-center'> ¿Recuerdas tu contrasena? <Link to={"/login"}>Login here</Link> </p>
+                <p className='col-12 text-center'> ¿Recuerdas tu contrasena? <Link  to={"/login"}>Login here</Link> </p>
            </div>
             <form className="row" onClick={(e) => e.preventDefault()}>
                 <div className="col-12">
                     <div className="mb-3">
-                        <label htmlFor="formGroupEmail" className="form-label">Correo electronico</label>
+                        <label htmlFor="formGroupEmail" className="form-label fw-bold">Correo electronico</label>
                         <input
                             id="formGroupEmail"
                             type="text"

@@ -5,6 +5,19 @@ from flask import Flask, request, jsonify, url_for, Blueprint
 from api.models import db, User
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
+from base64 import b64encode
+import os
+
+from flask_jwt_extended import create_access_token, jwt_required
+
+# libreria para generar hash
+from werkzeug.security import generate_password_hash, check_password_hash 
+
+def set_password(password,salt):
+    return generate_password_hash(f'{password} {salt}')
+
+def check_password(hash_password, password):
+    return check_password_hash(hash_password, password)
 
 api = Blueprint('api', __name__)
 
@@ -12,12 +25,12 @@ api = Blueprint('api', __name__)
 CORS(api)
 
 @api.route('/user', methods = ["GET"])
+@jwt_required() # con este decorador si o si hay que mandar token para acceder
 def get_users():
-
+    
     user  = User()
     user  = user.query.all()
     user = list(map(lambda user : user.serialize(),user))
-    
     return jsonify(user), 200
 
 @api.route('/user', methods = ['POST'])
@@ -26,16 +39,22 @@ def add_user():
 
     body_email = body.get("email", None)
     body_password = body.get("password", None)
-    body_salt = body.get("salt", None)
+    # body_salt = body.get("salt", None)
 
     if body_email is None or body_password is None:
         return jsonify({"Mensaje": "Bad credentials"}), 400
+    
+    salt = b64encode(os.urandom(32)).decode("utf-8")
+    body_password = set_password(body_password,salt) # convierte la contrasena en un hash
+    user = User(email = body_email, password = body_password, salt = salt) # se crea el objeto pero aun no se manda a la base de datos.
 
-    user = User(email = body_email, password = body_password, salt = body_salt)
+    # Se valida si el usuario creado existe
+    user_exist = user.query.filter_by(email = body_email).one_or_none() # busca y valida si existe el email.
+    print(user_exist)
 
-    if user is  None : # ¿ El usuario existe ?
-        return jsonify({"Message":"User  already exists"}) , 409
-    else: # ¿ El usuario no existe ? 
+    if user_exist is not None: 
+        return jsonify({"Message":"User already exits"}),400
+    else: 
         try:
             db.session.add(user)
             db.session.commit()
@@ -45,9 +64,11 @@ def add_user():
             db.session.rollback()
             return jsonify({"Message":f"error : {error}"}), 500
 
+        
 
 # Preguntar si es la manera correcta de actualizar registros y como registrar cuando se ha cambiado el registro con update
 @api.route('/user/<int:user_id>', methods = ['PUT'])
+
 def update_user(user_id):
     body = request.json 
     body_email = body.get('email', None)
@@ -67,6 +88,7 @@ def update_user(user_id):
     else :
             
         try:
+            user.email = body_email
             user.password = body_password
             user.salt = body_salt # el salt es un valor fijo
             db.session.commit()
@@ -77,5 +99,26 @@ def update_user(user_id):
             return jsonify({"Message": "Algo ha ocurrido"}),500
        
 
+@api.route('/login', methods = ["POST"])
+def login():
+    data = request.json
 
+    email =  data.get("email", None)
+    password = data.get("password", None)
 
+    if email is None or password is None:
+        return jsonify({"Message": "Somethings is wrong with the credentials"}), 400
+
+    user  = User()
+    user = user.query.filter_by(email = email).one_or_none()
+
+    if user is None :
+        return jsonify({"Message": "User not found!"}),404
+    else : 
+        if check_password(user.password, password):
+            # al token se le pasa un identity, un valor unequivoco
+            converted_id = str(user.id)
+            token  = create_access_token(identity=converted_id)
+            return jsonify({"Token":token}),200
+        else:
+            return jsonify("No tienes permiso"),400

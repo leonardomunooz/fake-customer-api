@@ -9,6 +9,7 @@ class User(db.Model):
     salt = db.Column(db.String(180), nullable = True) # cambiar a False
     avatar = db.Column(db.String(100), nullable = False, default = "https://i.pravatar.cc/300") # se guarda la referencia a la imagen    
     public_id_avatar = db.Column(db.String(100), nullable = True)
+   # api_key = db.Column(db.Column(db.String(250), nullable = False, unique = True)) # Se utiliza una logica parecida del salt  
     created_at = db.Column(db.DateTime, nullable = False, default = datetime.now(timezone.utc))
     update_at = db.Column(db.DateTime, nullable = False, default = datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
 

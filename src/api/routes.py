@@ -16,8 +16,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 def set_password(password,salt):
     return generate_password_hash(f'{password} {salt}')
 
-def check_password(hash_password, password):
-    return check_password_hash(hash_password, password)
+def check_password(hash_password, password, salt):
+    return check_password_hash(hash_password, f"{password} {salt}")
 
 api = Blueprint('api', __name__)
 
@@ -66,14 +66,14 @@ def add_user():
 
         
 
-# Preguntar si es la manera correcta de actualizar registros y como registrar cuando se ha cambiado el registro con update
+# 
 @api.route('/user/<int:user_id>', methods = ['PUT'])
 
 def update_user(user_id):
     body = request.json 
+
     body_email = body.get('email', None)
     body_password = body.get("password", None)
-    body_salt  = body.get("salt", None) # el usuario no debe tener acceso al salt 
 
     if body_password is None or body_email  is None:
         return jsonify({"Message": "Somethings is wrong with the credentials"}), 400
@@ -90,7 +90,6 @@ def update_user(user_id):
         try:
             user.email = body_email
             user.password = body_password
-            user.salt = body_salt # el salt es un valor fijo
             db.session.commit()
             return jsonify({"Message": "usuario actualizado correctamente"}), 200
         except Exception as error:
@@ -115,10 +114,11 @@ def login():
     if user is None :
         return jsonify({"Message": "User not found!"}),404
     else : 
-        if check_password(user.password, password):
+
+        if check_password(user.password, password, user.salt):
             # al token se le pasa un identity, un valor unequivoco
             converted_id = str(user.id)
             token  = create_access_token(identity=converted_id)
-            return jsonify({"Token":token}),200
+            return jsonify({"token":token}),200
         else:
             return jsonify("No tienes permiso"),400

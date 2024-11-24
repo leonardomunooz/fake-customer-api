@@ -17,18 +17,19 @@ const Login = () => {
     const { actions } = useContext(Context)
     const navigate = useNavigate()
 
-    const handleChange = ({target}) => {
+    const handleChange = ({ target }) => {
         setUser({
             ...user,
             [target.name]: target.value
         })
     }
     const handleSubmit = async (e) => {
-        if (user.email.trim() == "" || user.password.trim() == "" ){
-            console.log("No se pueden enviar elementos vacios") 
-            return 
-        }else{
-            console.log('Programar funcionalidad')
+        if (user.email.trim() == "" || user.password.trim() == "") {
+            console.log("No se pueden enviar elementos vacios")
+            return
+        } else {
+            const response = await actions.login(user)
+
         }
     }
 

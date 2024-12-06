@@ -2,14 +2,16 @@ import React, { useContext } from "react";
 import { Context } from "../store/appContext";
 import { Navigate } from "react-router-dom";
 
+import { Navbar } from "../component/navbar";
+
 export const Profile = () => {
     const { store, actions } = useContext(Context)
     // const navigate = useNavigate()
 
-    console.log(store.token)
+
     return (
         <div className="container">
-
+            <Navbar />
             {
 
                 store.token ?

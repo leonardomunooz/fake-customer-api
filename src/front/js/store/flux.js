@@ -55,6 +55,21 @@ const getState = ({ getStore, getActions, setStore }) => {
 				} catch (error) {
 					console.log(error)
 				}
+			},
+			logout : () => {
+				setStore({
+					token : null	
+				})
+				sessionStorage.removeItem("token")
+			},
+			registerProduct : async (product) => {
+				try {
+					const response  = await fetch(`${process.env.BACKEND_URL}/api/product`)
+				
+					
+				} catch (error) {
+					console.log(error)
+				}
 			}
 		}
 	};

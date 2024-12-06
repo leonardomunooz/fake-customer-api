@@ -1,8 +1,13 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timezone
+
+# import enum
+# from sqlalchemy import Enum
+
 db = SQLAlchemy()
 
 class User(db.Model):
+    __tablename__ : "user"
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(180), unique=False, nullable=False)
@@ -12,6 +17,9 @@ class User(db.Model):
    # api_key = db.Column(db.Column(db.String(250), nullable = False, unique = True)) # Se utiliza una logica parecida del salt  
     created_at = db.Column(db.DateTime, nullable = False, default = datetime.now(timezone.utc))
     update_at = db.Column(db.DateTime, nullable = False, default = datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
+
+    products = db.relationship("Product", back_populates= "user")
+    product_favorites = db.relationship("FavoriteProduct", back_populates= "user") 
 
     def __repr__(self):
         return f'<User {self.email}>'
@@ -24,21 +32,57 @@ class User(db.Model):
             # do not serialize the password, its a security breach
         }
 
-class Favorite(db.Model):
+class FavoriteProduct(db.Model):
+    __tablename__ : "favorite_product"
     id = db.Column(db.Integer, primary_key = True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = False)
     product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable = True)
+    user = db.relationship("User")
+    product = db.relationship("Product")
+    
 
 class Product(db.Model):
+    __tablename__ : "product"
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(80), nullable = False)
     description = db.Column(db.String(255), nullable = True)
     price = db.Column(db.Float, nullable = True)
+    # category = db.Column(Enum(CategoryEnum), unique = False, nullable = True) 
     url_product = db.Column(db.String(255), nullable = False, default = "https://miro.medium.com/v2/resize:fit:1400/1*K4LP6vY33IGyF4TrJaDomA.png")
-    categoria_id = db.Column(db.Integer, db.ForeignKey("categoria.id"), nullable  = True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = False)
+    user = db.relationship("User")
+    product_categories = db.relationship("ProductCategory", back_populates= "product") 
+    def serialize(self):
+        return {
+            "id" : self.id,
+            "name": self.name,
+            "description": self.description,
+            "price": self.price,
+            "category" : self.category    
+            # do not serialize the password, its a security breach
+        }
 
-
-class Categoria(db.Model):
+class ProductCategory(db.Model):
+    __tablename__ : "product_category"
     id = db.Column(db.Integer, primary_key = True)
-    name = db.Column(db.String(50), nullable = False )
+    category_id = db.Column(db.Integer, db.ForeignKey("category.id"), nullable  = True)
+    product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable = True)
+    category = db.relationship("Category")
+    product = db.relationship("Product")
+
+class Category(db.Model):
+    __tablename__ : "category"
+    id = db.Column(db.Integer, primary_key = True)
+    name = db.Column(db.String(50), nullable = False, unique= True )
+    product_categories = db.relationship("ProductCategory", back_populates= "category") 
+
+    def serialize(self):
+      return {
+            "id" : self.id,
+            "name": self.name,
+            # do not serialize the password, its a security breach
+        }
     
+
+
+    # buscar informacion sobre el backpopules y el relationship

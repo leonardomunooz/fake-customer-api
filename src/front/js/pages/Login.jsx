@@ -29,7 +29,10 @@ const Login = () => {
             return
         } else {
             const response = await actions.login(user)
-
+            
+            if(response){
+                navigate('/profile')
+            }
         }
     }
 

@@ -2,11 +2,12 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User
+from api.models import db, User, Product, Category
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from base64 import b64encode
 import os
+
 
 from flask_jwt_extended import create_access_token, jwt_required
 
@@ -70,7 +71,8 @@ def add_user():
 @api.route('/user/<int:user_id>', methods = ['PUT'])
 
 def update_user(user_id):
-    body = request.json 
+    body = request.json
+    
 
     body_email = body.get('email', None)
     body_password = body.get("password", None)
@@ -122,3 +124,77 @@ def login():
             return jsonify({"token":token}),200
         else:
             return jsonify("No tienes permiso"),400
+
+
+
+#  A partir de aqui, se muestra las rutas  de los productos 
+
+
+# POST  /product
+
+@api.route("/product", methods = ["POST"])  
+def add_product():
+    
+    body = request.json
+    data_form = request.form 
+    data_files = request.files
+    print(data_files)
+
+    print(data_form)
+    # print(data_files)
+
+
+    name =  body.get("name", None)
+    description = body.get('description', None)
+    price = body.get("price", None)
+    category = body.get("category", None)
+    imagen = body.get("imagen", None)
+
+    if name is None: 
+        return jsonify({'Mensaje' : "Wrong body request"}), 400
+
+    producto = Product(name=name,description = description, price = price, category = category)
+    # print(producto.serialize())
+ 
+    if producto.id is None:
+        try:
+            pass
+            # db.session.add(producto)
+            # db.session.commit()
+        except Exception as error : 
+            print(error)
+            db.session.rollback()
+            return jsonify('Algo ha ocurrido'), 500
+
+    return jsonify([]),200
+
+
+
+# POST  /categoria
+
+@api.route('/categoria',methods = ['POST'])
+def add_category():
+    body =  request.json
+
+    name = body.get('name', None)
+
+    if name is None:
+        return jsonify({'Mensaje' : "Wrong body request"}), 400 
+    
+    categoria = Categoria(name=name)
+    categoria = categoria.query.filter_by(name = name).one_or_none()
+    print(categoria)
+
+    if categoria.name is None:
+        try:
+            db.session.add(categoria)
+            db.session.commit()
+            return jsonify(categoria.serialize()),200
+        except Exception as error:
+            print(error)
+            db.session.rollback()
+            return jsonify({'Algo ha ocurrido'}), 500
+    else :
+          return jsonify({"Message": "row already exits"}), 409
+    
+    return jsonify([]),200

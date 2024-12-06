@@ -1,9 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timezone
 
-# import enum
-# from sqlalchemy import Enum
-
 db = SQLAlchemy()
 
 class User(db.Model):
@@ -83,6 +80,3 @@ class Category(db.Model):
             # do not serialize the password, its a security breach
         }
     
-
-
-    # buscar informacion sobre el backpopules y el relationship

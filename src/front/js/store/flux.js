@@ -64,9 +64,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			registerProduct : async (product) => {
 				try {
-					const response  = await fetch(`${process.env.BACKEND_URL}/api/product`)
-				
-					
+					const response  = await fetch(`${process.env.BACKEND_URL}/api/product`,{
+						method : "POST",
+						body :  product
+					})
+					console.log(product)
+					return response.status				
 				} catch (error) {
 					console.log(error)
 				}

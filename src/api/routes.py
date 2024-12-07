@@ -135,36 +135,36 @@ def login():
 @api.route("/product", methods = ["POST"])  
 def add_product():
     
-    body = request.json
     data_form = request.form 
     data_files = request.files
+    print(data_form.get("name"))
     print(data_files)
 
-    print(data_form)
-    # print(data_files)
+    # print(data_form)
+    # # print(data_files)
 
 
-    name =  body.get("name", None)
-    description = body.get('description', None)
-    price = body.get("price", None)
-    category = body.get("category", None)
-    imagen = body.get("imagen", None)
+    # name =  body.get("name", None)
+    # description = body.get('description', None)
+    # price = body.get("price", None)
+    # category = body.get("category", None)
+    # imagen = body.get("imagen", None)
 
-    if name is None: 
-        return jsonify({'Mensaje' : "Wrong body request"}), 400
+    # if name is None: 
+    #     return jsonify({'Mensaje' : "Wrong body request"}), 400
 
-    producto = Product(name=name,description = description, price = price, category = category)
-    # print(producto.serialize())
+    # producto = Product(name=name,description = description, price = price, category = category)
+    # # print(producto.serialize())
  
-    if producto.id is None:
-        try:
-            pass
-            # db.session.add(producto)
-            # db.session.commit()
-        except Exception as error : 
-            print(error)
-            db.session.rollback()
-            return jsonify('Algo ha ocurrido'), 500
+    # if producto.id is None:
+    #     try:
+    #         pass
+    #         # db.session.add(producto)
+    #         # db.session.commit()
+    #     except Exception as error : 
+    #         print(error)
+    #         db.session.rollback()
+    #         return jsonify('Algo ha ocurrido'), 500
 
     return jsonify([]),200
 

@@ -11,8 +11,8 @@ const initialProduct = {
 
 export const RegisterProduct = () => {
 
-    const [product, setProduct] = useState(initialProduct)
     const { store, actions } = useContext(Context)
+    const [product, setProduct] = useState(initialProduct)
 
     const handleFile = ({ target }) => {
         setProduct({
@@ -34,15 +34,21 @@ export const RegisterProduct = () => {
         event.preventDefault();
 
         const formData = new FormData()
+
         formData.append("name", product.name)
         formData.append("description", product.description)
         formData.append("price", product.price)
         formData.append("category", product.category)
         formData.append("imagen", product.imagen)
-        console.log(formData)
+        const response = await actions.registerProduct(formData)
 
+        if (response === 200) {
+            setProduct(initialProduct)
+            alert("producto registrado exitosamente")
+        } else {
+            alert("error al registrar el producto")
+        }
     }
-
     return (
         <div className="container">
 

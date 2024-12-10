@@ -45,19 +45,19 @@ class Product(db.Model):
     name = db.Column(db.String(80), nullable = False)
     description = db.Column(db.String(255), nullable = True)
     price = db.Column(db.Float, nullable = True)
-    # category = db.Column(Enum(CategoryEnum), unique = False, nullable = True) 
     url_product = db.Column(db.String(255), nullable = False, default = "https://miro.medium.com/v2/resize:fit:1400/1*K4LP6vY33IGyF4TrJaDomA.png")
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = False)
     user = db.relationship("User")
-    product_categories = db.relationship("ProductCategory", back_populates= "product") 
+    product_categories = db.relationship("ProductCategory", back_populates= "product")
+    def __repr__(self):
+        return f'<Product {self.name}>'
     def serialize(self):
         return {
             "id" : self.id,
             "name": self.name,
             "description": self.description,
-            "price": self.price,
-            "category" : self.category    
-            # do not serialize the password, its a security breach
+            "price": self.price
+         
         }
 
 class ProductCategory(db.Model):
@@ -72,7 +72,10 @@ class Category(db.Model):
     __tablename__ : "category"
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(50), nullable = False, unique= True )
-    product_categories = db.relationship("ProductCategory", back_populates= "category") 
+    product_categories = db.relationship("ProductCategory", back_populates= "category")
+
+    def __repr__(self):
+        return f'<Category {self.name}>'
 
     def serialize(self):
       return {

@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Product, Category
+from api.models import db, User, Product, Category, ProductCategory
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from base64 import b64encode
@@ -137,24 +137,28 @@ def add_product():
     
     data_form = request.form 
     data_files = request.files
-    print(data_form.get("name"))
-    print(data_files)
+    
+    name  = data_form.get("name", None)
+    description = data_form.get("description", None)
+    price = data_form.get("price", None)
+    category = data_form.get("category", None)
 
-    # print(data_form)
-    # # print(data_files)
+    
+    if name == ""  or description == "" or price == "":
+        return(jsonify("Campos faltantes")), 400
+    else: 
+        product = Product(name=name,description = description, price = price)
+        product_exist =  product.query.filter_by(id = id)
+
+    # Buscalo si existe ese producto por el id en la bd.
+
+    # Si no existe, crealo.
+    # Si existe, crea un objeto ProductCategory y asignale el id del producto y el id de la categoria (cableadamente)
 
 
-    # name =  body.get("name", None)
-    # description = body.get('description', None)
-    # price = body.get("price", None)
-    # category = body.get("category", None)
-    # imagen = body.get("imagen", None)
 
-    # if name is None: 
-    #     return jsonify({'Mensaje' : "Wrong body request"}), 400
 
-    # producto = Product(name=name,description = description, price = price, category = category)
-    # # print(producto.serialize())
+    print(producto.serialize())
  
     # if producto.id is None:
     #     try:

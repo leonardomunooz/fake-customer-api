@@ -142,24 +142,38 @@ def add_product():
     name  = data_form.get("name", None)
     description = data_form.get("description", None)
     price = data_form.get("price", None)
+
     category = data_form.get("category", None)
+    category = json.loads(category)
+    print(type(category))
 
-    category_json = json.loads(category)
+    if name is None or description is None or price is None or category is None:
+        return jsonify( {"Message": "Syntax error"}), 400
+    else:
+        user = User()
+        product = Product()
 
-    print(type(category_json))
+        product = product.query.all()
+        user = user.query.all()
 
-    for item in category_json:
-        print(item)
+
+
+        # agregalo por el admin y luego ejecuta el entpoind para ver la consola
+        # product = Product(user = user, name = name, description =description, price = price)
+        
+        for product in product:
+            print(product.serialize())
+
+        # db.session.add(product)
+
+        # db.session.commit()
+
+
     
     # Buscalo si existe ese producto por el id en la bd.
 
-    # Si no existe, crealo.
+    # Si no existe, creal
     # Si existe, crea un objeto ProductCategory y asignale el id del producto y el id de la categoria (cableadamente)
-
-
-
-
-    # print(producto.serialize())
  
     # if producto.id is None:
     #     try:
@@ -175,13 +189,12 @@ def add_product():
 
 
 
-# POST  /categoria
+# POST  /categoria Population
 
 @api.route('/categoria',methods = ['POST'])
 def add_category():
     
     data_form = request.form
-
     category_name = data_form.get('name', None)
 
     if category_name is None:
@@ -201,25 +214,22 @@ def add_category():
     db.session.commit()
     return jsonify( {"message" : "data populated"}), 200
 
+
+@api.route('/productCategory', methods = ['POST'])
+def add_product_category():
+
+    category_list = Category()
+    category_list = category_list.query.all()
+    product_category = ProductCategory()
+
+    for category in category_list:
+        product_category = ProductCategory(category_id = category.get_id())
+        print(product_category)
+        db.session.add(product_category)
+
+    db.session.commit()
     
 
+    return jsonify([]), 200
 
 
-
-    # categoria = Categoria(name=name)
-    # categoria = categoria.query.filter_by(name = name).one_or_none()
-    # print(categoria)
-
-    # if categoria.name is None:
-    #     try:
-    #         db.session.add(categoria)
-    #         db.session.commit()
-    #         return jsonify(categoria.serialize()),200
-    #     except Exception as error:
-    #         print(error)
-    #         db.session.rollback()
-    #         return jsonify({'Algo ha ocurrido'}), 500
-    # else :
-    #       return jsonify({"Message": "row already exits"}), 409
-    
-    return jsonify([]),200

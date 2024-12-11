@@ -47,18 +47,19 @@ class Product(db.Model):
     price = db.Column(db.Float, nullable = True)
     url_product = db.Column(db.String(255), nullable = False, default = "https://miro.medium.com/v2/resize:fit:1400/1*K4LP6vY33IGyF4TrJaDomA.png")
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = False)
+
     user = db.relationship("User")
     product_categories = db.relationship("ProductCategory", back_populates= "product")
 
     def __repr__(self):
-        return f'<Product {self.name}>'
+        return f'Product {self.name} id : {self.id}'
     def serialize(self):
         return {
             "id" : self.id,
             "name": self.name,
             "description": self.description,
             "price": self.price,
-            "user": self.user,
+            "user": self.user.id  ,
             "product_categories": self.product_categories
         }
 
@@ -72,16 +73,11 @@ class ProductCategory(db.Model):
     product = db.relationship("Product")
 
     def __repr__(self):
-        return f'<{self.category.name}>'
+        return f'id : {self.category_id} {self.category.name}'
 
     def serialize(self):
       return {
-            "id" : self.id,
-            "category_id": self.category_id,
-            "product_id": self.product_id,
-            "category": self.category,
-            "category": self.category,
-            "product": self.product
+           "id": self.id
             # do not serialize the password, its a security breach
         }
 
@@ -92,7 +88,8 @@ class Category(db.Model):
     product_categories = db.relationship("ProductCategory", back_populates= "category")
 
     def __repr__(self):
-        return f'<Category {self.name}>'
+        return f'Category {self.name} id {self.id}' 
+        # return f'Category {self.name} id {self.id}'
 
     def serialize(self):
       return {
@@ -100,3 +97,6 @@ class Category(db.Model):
             "name": self.name,
             # do not serialize the password, its a security breach
         }
+    
+    def get_id(self):
+        return self.id

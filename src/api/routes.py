@@ -7,6 +7,7 @@ from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from base64 import b64encode
 import os
+import json
 
 
 from flask_jwt_extended import create_access_token, jwt_required
@@ -136,20 +137,20 @@ def login():
 def add_product():
     
     data_form = request.form 
-    data_files = request.files
+    # data_files = request.files
     
     name  = data_form.get("name", None)
     description = data_form.get("description", None)
     price = data_form.get("price", None)
     category = data_form.get("category", None)
 
-    
-    if name == ""  or description == "" or price == "":
-        return(jsonify("Campos faltantes")), 400
-    else: 
-        product = Product(name=name,description = description, price = price)
-        product_exist =  product.query.filter_by(id = id)
+    category_json = json.loads(category)
 
+    print(type(category_json))
+
+    for item in category_json:
+        print(item)
+    
     # Buscalo si existe ese producto por el id en la bd.
 
     # Si no existe, crealo.
@@ -158,7 +159,7 @@ def add_product():
 
 
 
-    print(producto.serialize())
+    # print(producto.serialize())
  
     # if producto.id is None:
     #     try:
@@ -178,27 +179,47 @@ def add_product():
 
 @api.route('/categoria',methods = ['POST'])
 def add_category():
-    body =  request.json
-
-    name = body.get('name', None)
-
-    if name is None:
-        return jsonify({'Mensaje' : "Wrong body request"}), 400 
     
-    categoria = Categoria(name=name)
-    categoria = categoria.query.filter_by(name = name).one_or_none()
-    print(categoria)
+    data_form = request.form
 
-    if categoria.name is None:
+    category_name = data_form.get('name', None)
+
+    if category_name is None:
+        return jsonify({'Mensaje' : "Wrong body request"}), 400 
+
+    category_name_list = category_name.split(",")
+
+    for name in category_name_list:
         try:
-            db.session.add(categoria)
-            db.session.commit()
-            return jsonify(categoria.serialize()),200
+            category = Category(name = name)
+            db.session.add(category) 
         except Exception as error:
             print(error)
             db.session.rollback()
-            return jsonify({'Algo ha ocurrido'}), 500
-    else :
-          return jsonify({"Message": "row already exits"}), 409
+            return jsonify({'Something happend'}), 500
+        
+    db.session.commit()
+    return jsonify( {"message" : "data populated"}), 200
+
+    
+
+
+
+
+    # categoria = Categoria(name=name)
+    # categoria = categoria.query.filter_by(name = name).one_or_none()
+    # print(categoria)
+
+    # if categoria.name is None:
+    #     try:
+    #         db.session.add(categoria)
+    #         db.session.commit()
+    #         return jsonify(categoria.serialize()),200
+    #     except Exception as error:
+    #         print(error)
+    #         db.session.rollback()
+    #         return jsonify({'Algo ha ocurrido'}), 500
+    # else :
+    #       return jsonify({"Message": "row already exits"}), 409
     
     return jsonify([]),200

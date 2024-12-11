@@ -42,13 +42,14 @@ class FavoriteProduct(db.Model):
 class Product(db.Model):
     __tablename__ : "product"
     id = db.Column(db.Integer, primary_key = True)
-    name = db.Column(db.String(80), nullable = False)
+    name = db.Column(db.String(80), nullable = False, unique = True)
     description = db.Column(db.String(255), nullable = True)
     price = db.Column(db.Float, nullable = True)
     url_product = db.Column(db.String(255), nullable = False, default = "https://miro.medium.com/v2/resize:fit:1400/1*K4LP6vY33IGyF4TrJaDomA.png")
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = False)
     user = db.relationship("User")
     product_categories = db.relationship("ProductCategory", back_populates= "product")
+
     def __repr__(self):
         return f'<Product {self.name}>'
     def serialize(self):
@@ -56,8 +57,9 @@ class Product(db.Model):
             "id" : self.id,
             "name": self.name,
             "description": self.description,
-            "price": self.price
-         
+            "price": self.price,
+            "user": self.user,
+            "product_categories": self.product_categories
         }
 
 class ProductCategory(db.Model):
@@ -65,8 +67,23 @@ class ProductCategory(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     category_id = db.Column(db.Integer, db.ForeignKey("category.id"), nullable  = True)
     product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable = True)
+
     category = db.relationship("Category")
     product = db.relationship("Product")
+
+    def __repr__(self):
+        return f'<{self.category.name}>'
+
+    def serialize(self):
+      return {
+            "id" : self.id,
+            "category_id": self.category_id,
+            "product_id": self.product_id,
+            "category": self.category,
+            "category": self.category,
+            "product": self.product
+            # do not serialize the password, its a security breach
+        }
 
 class Category(db.Model):
     __tablename__ : "category"
@@ -83,4 +100,3 @@ class Category(db.Model):
             "name": self.name,
             # do not serialize the password, its a security breach
         }
-    

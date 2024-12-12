@@ -137,55 +137,70 @@ def login():
 def add_product():
     
     data_form = request.form 
-    # data_files = request.files
+    #  data_files = request.files
     
     name  = data_form.get("name", None)
     description = data_form.get("description", None)
     price = data_form.get("price", None)
-
     category = data_form.get("category", None)
-    category = json.loads(category)
-    print(type(category))
 
-    if name is None or description is None or price is None or category is None:
-        return jsonify( {"Message": "Syntax error"}), 400
-    else:
-        user = User()
-        product = Product()
+    print(name, description, price, category)
+    """
+        name
+        description
+        price
+        category_id
+        image
+        user_id
+    """
 
-        product = product.query.all()
-        user = user.query.all()
+    product = Product(
+        name=name,
+        description=description,
+        price=price,
+        user_id=1,
+    )
+    db.session.add(product) 
+    db.session.flush()
 
+    try:
 
+        product_category = ProductCategory(
+            category_id= category,
+            product_id= product.id
+        )
 
-        # agregalo por el admin y luego ejecuta el entpoind para ver la consola
-        # product = Product(user = user, name = name, description =description, price = price)
-        
-        for product in product:
-            print(product.serialize())
+        db.session.add(product_category)
+        db.session.commit()
+        return jsonify("user guardado exitosamente"), 201
+    except Exception as err:
+        return jsonify(f"Error: {err.args}")
 
-        # db.session.add(product)
+    # if name is None or description is None or price is None or category is None:
+    #     return jsonify( {"Message": "Syntax error"}), 400
+    # else:
+    #     user = User()
+    #     products = Product()
 
-        # db.session.commit()
+    #     products = products.query.all()
+    #     user = user.query.all()
 
+    #     # agregalo por el admin y luego ejecuta el endpoind para ver la consola
 
-    
-    # Buscalo si existe ese producto por el id en la bd.
-
-    # Si no existe, creal
-    # Si existe, crea un objeto ProductCategory y asignale el id del producto y el id de la categoria (cableadamente)
- 
-    # if producto.id is None:
     #     try:
-    #         pass
-    #         # db.session.add(producto)
-    #         # db.session.commit()
-    #     except Exception as error : 
-    #         print(error)
-    #         db.session.rollback()
-    #         return jsonify('Algo ha ocurrido'), 500
+    #         product = Product(user = user, name = name, description =description, price = price)
+    #         product_category = ProductCategory(category_id = category, product_category = 5)
 
-    return jsonify([]),200
+    #     except Exception as error:
+    #         print(error)
+        
+    #     print(product.serialize())
+
+  
+
+    # return jsonify([]),200
+
+    return jsonify("trabajando por usted"), 200
 
 
 

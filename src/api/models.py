@@ -24,8 +24,7 @@ class User(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "email": self.email,
-            "password": self.password
+            "email": self.email
             # do not serialize the password, its a security breach
         }
 
@@ -59,7 +58,7 @@ class Product(db.Model):
             "name": self.name,
             "description": self.description,
             "price": self.price,
-            "user": self.user.id  ,
+            # "user": self.user.id ,
             "product_categories": self.product_categories
         }
 
@@ -84,7 +83,7 @@ class ProductCategory(db.Model):
 class Category(db.Model):
     __tablename__ : "category"
     id = db.Column(db.Integer, primary_key = True)
-    name = db.Column(db.String(50), nullable = False, unique= True )
+    name = db.Column(db.String(50), nullable = False, unique= True)
     product_categories = db.relationship("ProductCategory", back_populates= "category")
 
     def __repr__(self):

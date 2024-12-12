@@ -144,7 +144,7 @@ def add_product():
     price = data_form.get("price", None)
     category = data_form.get("category", None)
 
-    print(name, description, price, category)
+    # print(name, description, price, category)
     """
         name
         description

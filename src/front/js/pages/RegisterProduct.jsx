@@ -42,7 +42,7 @@ export const RegisterProduct = () => {
         formData.append("imagen", product.imagen)
         const response = await actions.registerProduct(formData)
 
-        if (response === 200) {
+        if (response == 201) {
             setProduct(initialProduct)
             alert("producto registrado exitosamente")
         } else {
@@ -105,10 +105,14 @@ export const RegisterProduct = () => {
                             onChange={handleChange}
                             name="category">
                             <option value="default">Choose...</option>
-                            <option value="verduras">Verduras</option>
-                            <option value="frutas">Frutas</option>
-                            <option value="dulces"
-                            >Dulces</option>
+                            <option value="1">Dulces Y golosinas</option>
+                            <option value="2">Carnes</option>
+                            <option value="3">Enlatados</option>
+                            <option value="4">Frutas</option>
+                            <option value="5">Huevos y Lacteos</option>
+                            <option value="6">Verduras</option>
+                            <option value="7">Bebidas</option>
+
                         </select>
                     </div>
                 </div>

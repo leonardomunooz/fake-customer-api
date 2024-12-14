@@ -7,8 +7,11 @@ from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from base64 import b64encode
 import os
-import json
+import uuid
 
+
+import cloudinary
+import cloudinary.uploader as uploader
 
 from flask_jwt_extended import create_access_token, jwt_required
 
@@ -29,7 +32,7 @@ CORS(api)
 @api.route('/user', methods = ["GET"])
 @jwt_required() # con este decorador si o si hay que mandar token para acceder
 def get_users():
-    
+
     user  = User()
     user  = user.query.all()
     user = list(map(lambda user : user.serialize(),user))
@@ -138,96 +141,67 @@ def add_product():
     
     data_form = request.form 
     data_files = request.files
-
-    data  = {
-        "name" : data_form.get('name', None),
-        "description" : data_form.get("description"),
-        "price" : data_form.get('price', None),
-        "category" : data_form.get('category'),
-        "imagen" : data_files.get('imagen')
-    }
-
-    print(data)
     
     name  = data_form.get("name", None)
     description = data_form.get("description", None)
     price = data_form.get("price", None)
     category = data_form.get("category", None)
+    imagen = data_files.get("imagen", None)
 
-    # print(name, description, price, category)
-    """
-        name
-        description
-        price
-        category_id
-        image
-        user_id
-    """
+    if name is None or description is None or price is None or category is None:
+        return jsonify( {"Message": "Syntax error"}), 400
+       
+    else:
+         
+        result_cloud = uploader.upload(imagen)
+      
+        # print()
+        # return jsonify(result_cloud["url"])
+        # GUARDA LA IMAGEN
+        try:
+            product = Product(
+                name=name,
+                description=description,
+                price=price,
+                user_id=1,
+                imagen = result_cloud['secure_url'],
+                imagen_id = result_cloud['public_id']  # Este valor esta cableado. modificar !!!!!
+            )
+            db.session.add(product) 
+            db.session.flush()
 
-    product = Product(
-        name=name,
-        description=description,
-        price=price,
-        user_id=1,
-    )
-    db.session.add(product) 
-    db.session.flush()
-
-    try:
-
-        product_category = ProductCategory(
-            category_id= category,
-            product_id= product.id
-        )
-
-        db.session.add(product_category)
-        db.session.commit()
-        return jsonify("user guardado exitosamente"), 201
-    except Exception as err:
-        return jsonify(f"Error: {err.args}")
-
-    # if name is None or description is None or price is None or category is None:
-    #     return jsonify( {"Message": "Syntax error"}), 400
-    # else:
-    #     user = User()
-    #     products = Product()
-
-    #     products = products.query.all()
-    #     user = user.query.all()
-
-    #     # agregalo por el admin y luego ejecuta el endpoind para ver la consola
-
-    #     try:
-    #         product = Product(user = user, name = name, description =description, price = price)
-    #         product_category = ProductCategory(category_id = category, product_category = 5)
-
-    #     except Exception as error:
-    #         print(error)
-        
-    #     print(product.serialize())
-
-  
-
-    # return jsonify([]),200
-
-    return jsonify("trabajando por usted"), 200
-
+        except Exception as error:
+            return jsonify(f"Error: {error.args}")
+            
+        try:
+            product_category = ProductCategory(
+                category_id=category,
+                product_id= product.id
+            )
+            db.session.add(product_category)
+            db.session.commit()
+            return jsonify("user guardado exitosamente"), 201
+        except Exception as err:
+            return jsonify(f"Error: {err.args}")
 
 
 # POST  /categoria Population
 
 @api.route('/categoria',methods = ['POST'])
 def add_category():
-    
-    data_form = request.form
-    category_name = data_form.get('name', None)
 
-    if category_name is None:
-        return jsonify({'Mensaje' : "Wrong body request"}), 400 
+    category_list = ["Dulces y Golosinas","Carnes","Enlatados","Frutas","Huevos y lacteos", "Verduras", "Bebidas"]
 
-    category_name_list = category_name.split(",")
 
-    for name in category_name_list:
+    # CODIGO PARA INTEGRACION CON UN PANEL ADMINISTRATIVO 
+    # data_form = request.form
+    # category_name = data_form.get('name', None)
+    # if category_name is None:
+    #     return jsonify({'Mensaje' : "Wrong body request"}), 400 
+
+    # category_name_list = category_name.split(",")
+
+    for name in category_list:
         try:
             category = Category(name = name)
             db.session.add(category) 

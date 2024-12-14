@@ -44,9 +44,11 @@ class Product(db.Model):
     name = db.Column(db.String(80), nullable = False , unique = True)
     description = db.Column(db.String(255), nullable = True)
     price = db.Column(db.Float, nullable = True)
-    url_product = db.Column(db.String(255), nullable = False, default = "https://miro.medium.com/v2/resize:fit:1400/1*K4LP6vY33IGyF4TrJaDomA.png")
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = False)
+    imagen = db.Column(db.String(255), nullable = False, default = "https://miro.medium.com/v2/resize:fit:1400/1*K4LP6vY33IGyF4TrJaDomA.png")
+    imagen_id = db.Column(db.String(200), nullable =True)
+    api_key = db.Column(db.String(200), nullable = True)
 
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = False)
     user = db.relationship("User")
     product_categories = db.relationship("ProductCategory", back_populates= "product")
 
@@ -58,7 +60,7 @@ class Product(db.Model):
             "name": self.name,
             "description": self.description,
             "price": self.price,
-            # "user": self.user.id ,
+            # "user": self.user.id,
             "product_categories": self.product_categories
         }
 

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react"
+import React, { useState, useContext, useRef } from "react"
 import { Context } from "../store/appContext"
 
 const initialProduct = {
@@ -6,14 +6,15 @@ const initialProduct = {
     description: "",
     price: "",
     imagen: "",
-    category: ""
+    category: ""  
 }
 
 export const RegisterProduct = () => {
-
     const { store, actions } = useContext(Context)
     const [product, setProduct] = useState(initialProduct)
+    const fileInputRef = useRef(null) 
 
+    // console.log(fileInputRef)
     const handleFile = ({ target }) => {
         setProduct({
             ...product,
@@ -22,19 +23,15 @@ export const RegisterProduct = () => {
     }
 
     const handleChange = ({ target }) => {
-
         setProduct({
             ...product,
             [target.name]: target.value
         })
-
     }
+
     const handleSubmit = async (event) => {
-
         event.preventDefault();
-
         const formData = new FormData()
-
         formData.append("name", product.name)
         formData.append("description", product.description)
         formData.append("price", product.price)
@@ -42,16 +39,17 @@ export const RegisterProduct = () => {
         formData.append("imagen", product.imagen)
         const response = await actions.registerProduct(formData)
 
-        if (response == 201) {
-            setProduct(initialProduct)
-            alert("producto registrado exitosamente")
+        if (response === 201) {
+            setProduct(initialProduct)  
+            fileInputRef.current.value = null  
+            alert("Producto registrado exitosamente")
         } else {
-            alert("error al registrar el producto")
+            alert("Error al registrar el producto")
         }
     }
+
     return (
         <div className="container">
-
             <form className="row g-3">
                 <h1 className="text-center">Registro de productos</h1>
                 <div className="row mb-3">
@@ -67,7 +65,6 @@ export const RegisterProduct = () => {
                         />
                     </div>
                 </div>
-
                 <div className="row mb-3">
                     <label htmlFor="inputDescription" className="col-sm-2 col-form-label">Descripcion</label>
                     <div className="col-md-6">
@@ -81,8 +78,7 @@ export const RegisterProduct = () => {
                         />
                     </div>
                 </div>
-
-                <div className="row mb-3" >
+                <div className="row mb-3">
                     <label htmlFor="inputGroupFile01" className="col-sm-2 col-form-label">Imagen</label>
                     <div className="col-md-6">
                         <div className="input-group mb-3">
@@ -91,7 +87,7 @@ export const RegisterProduct = () => {
                                 className="form-control"
                                 id="inputGroupFile02"
                                 onChange={handleFile}
-
+                                ref={fileInputRef} 
                             />
                         </div>
                     </div>
@@ -103,7 +99,8 @@ export const RegisterProduct = () => {
                             id="inputState"
                             className="form-select"
                             onChange={handleChange}
-                            name="category">
+                            name="category"
+                            value={product.category}>
                             <option value="default">Choose...</option>
                             <option value="1">Dulces Y golosinas</option>
                             <option value="2">Carnes</option>
@@ -112,7 +109,6 @@ export const RegisterProduct = () => {
                             <option value="5">Huevos y Lacteos</option>
                             <option value="6">Verduras</option>
                             <option value="7">Bebidas</option>
-
                         </select>
                     </div>
                 </div>
@@ -140,9 +136,9 @@ export const RegisterProduct = () => {
                         onClick={handleSubmit}
                     >Registrar</button>
                 </div>
-
             </form>
         </div>
+
     )
 
 }

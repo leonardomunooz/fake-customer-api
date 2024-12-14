@@ -1,7 +1,7 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-			token : sessionStorage.getItem("token",) || null
+			token : sessionStorage.getItem("token",) || null 
 		},
 		actions: {
 			register : async (user)  => {

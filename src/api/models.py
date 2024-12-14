@@ -41,7 +41,7 @@ class FavoriteProduct(db.Model):
 class Product(db.Model):
     __tablename__ : "product"
     id = db.Column(db.Integer, primary_key = True)
-    name = db.Column(db.String(80), nullable = False, unique = True)
+    name = db.Column(db.String(80), nullable = False , unique = True)
     description = db.Column(db.String(255), nullable = True)
     price = db.Column(db.Float, nullable = True)
     url_product = db.Column(db.String(255), nullable = False, default = "https://miro.medium.com/v2/resize:fit:1400/1*K4LP6vY33IGyF4TrJaDomA.png")
@@ -72,7 +72,7 @@ class ProductCategory(db.Model):
     product = db.relationship("Product")
 
     def __repr__(self):
-        return f'id : {self.category_id} {self.category.name}'
+        return f'id : {self.category_id} {self.category}'
 
     def serialize(self):
       return {

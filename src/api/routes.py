@@ -137,7 +137,17 @@ def login():
 def add_product():
     
     data_form = request.form 
-    #  data_files = request.files
+    data_files = request.files
+
+    data  = {
+        "name" : data_form.get('name', None),
+        "description" : data_form.get("description"),
+        "price" : data_form.get('price', None),
+        "category" : data_form.get('category'),
+        "imagen" : data_files.get('imagen')
+    }
+
+    print(data)
     
     name  = data_form.get("name", None)
     description = data_form.get("description", None)

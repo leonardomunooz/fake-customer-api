@@ -11,7 +11,7 @@ class User(db.Model):
     salt = db.Column(db.String(180), nullable = True) # cambiar a False
     avatar = db.Column(db.String(100), nullable = False, default = "https://i.pravatar.cc/300") # se guarda la referencia a la imagen    
     public_id_avatar = db.Column(db.String(100), nullable = True)
-   # api_key = db.Column(db.Column(db.String(250), nullable = False, unique = True)) # Se utiliza una logica parecida del salt  
+    api_key = db.Column(db.String(100), nullable = False, unique = True) # Se utiliza una logica parecida del salt  
     created_at = db.Column(db.DateTime, nullable = False, default = datetime.now(timezone.utc))
     update_at = db.Column(db.DateTime, nullable = False, default = datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
 
@@ -24,7 +24,8 @@ class User(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "email": self.email
+            "email": self.email,
+            "api_key" : self.api_key
             # do not serialize the password, its a security breach
         }
 
@@ -60,8 +61,8 @@ class Product(db.Model):
             "name": self.name,
             "description": self.description,
             "price": self.price,
-            # "user": self.user.id,
-            "product_categories": self.product_categories
+            "user": self.imagen
+            # "product_categories": self.product_categories
         }
 
 class ProductCategory(db.Model):

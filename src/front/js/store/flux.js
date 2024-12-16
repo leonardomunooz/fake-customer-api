@@ -1,7 +1,8 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-			token : sessionStorage.getItem("token",) || null 
+			token : sessionStorage.getItem("token",) || null,
+			api_key : null  
 		},
 		actions: {
 			register : async (user)  => {
@@ -15,6 +16,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					})
 
 					const data  = await response.json() 
+					console.log(data)
 
 					if (response.status === 201){
 						return true
@@ -39,12 +41,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 						body : JSON.stringify(user)
 					})
 					const data  = await response.json() 
-					console.log(data)
+					// console.log(data)
 
 
 					if(response.status == 200){
 						setStore({
-							token : data.token
+							token : data.token,
+							api_key : data.api_key
 						})
 						sessionStorage.setItem('token', data.token)
 						return true
@@ -68,7 +71,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 						method : "POST",
 						body :  product
 					})
-					console.log(product)
 					return response.status				
 				} catch (error) {
 					console.log(error)

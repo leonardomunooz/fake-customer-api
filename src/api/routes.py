@@ -8,6 +8,9 @@ from flask_cors import CORS
 from base64 import b64encode
 import os
 import uuid
+import secrets
+
+
 
 
 import cloudinary
@@ -40,18 +43,21 @@ def get_users():
 
 @api.route('/user', methods = ['POST'])
 def add_user():
+
+
     body = request.json
 
     body_email = body.get("email", None)
     body_password = body.get("password", None)
-    # body_salt = body.get("salt", None)
+
 
     if body_email is None or body_password is None:
         return jsonify({"Mensaje": "Bad credentials"}), 400
     
+    api = secrets.token_hex(25)
     salt = b64encode(os.urandom(32)).decode("utf-8")
     body_password = set_password(body_password,salt) # convierte la contrasena en un hash
-    user = User(email = body_email, password = body_password, salt = salt) # se crea el objeto pero aun no se manda a la base de datos.
+    user = User(email = body_email, password = body_password, salt = salt, api_key = api) # se crea el objeto pero aun no se manda a la base de datos.
 
     # Se valida si el usuario creado existe
     user_exist = user.query.filter_by(email = body_email).one_or_none() # busca y valida si existe el email.
@@ -71,7 +77,7 @@ def add_user():
 
         
 
-# 
+#
 @api.route('/user/<int:user_id>', methods = ['PUT'])
 
 def update_user(user_id):
@@ -125,7 +131,10 @@ def login():
             # al token se le pasa un identity, un valor unequivoco
             converted_id = str(user.id)
             token  = create_access_token(identity=converted_id)
-            return jsonify({"token":token}),200
+            return jsonify({
+                "token":token,
+                "api_key" : user.api_key
+                }),200
         else:
             return jsonify("No tienes permiso"),400
 
@@ -134,9 +143,9 @@ def login():
 #  A partir de aqui, se muestra las rutas  de los productos 
 
 
-# POST  /product
+# POST  /product add a product
 
-@api.route("/product", methods = ["POST"])  
+@api.route("/product", methods = ["POST"]) 
 def add_product():
     
     data_form = request.form 
@@ -232,3 +241,23 @@ def add_product_category():
     return jsonify([]), 200
 
 
+
+# GET  /products 
+
+@api.route('/products', methods = ['GET'])
+@jwt_required()
+def get_products():
+
+    body = request.form
+    api_key = body.get("api_key")
+    
+    user  = User()
+    user = user.query.filter_by(api_key = api_key).one_or_none()
+
+    if user is None:
+        return jsonify("Missing authorization API"), 401
+    else :
+        product = Product()
+        product = product.query.all()
+        product = list(map(lambda product : product.serialize(), product))
+        return jsonify(product),200

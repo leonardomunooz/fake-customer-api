@@ -6,13 +6,13 @@ const initialProduct = {
     description: "",
     price: "",
     imagen: "",
-    category: ""  
+    category: ""
 }
 
 export const RegisterProduct = () => {
     const { store, actions } = useContext(Context)
     const [product, setProduct] = useState(initialProduct)
-    const fileInputRef = useRef(null) 
+    const fileInputRef = useRef(null)
 
     // console.log(fileInputRef)
     const handleFile = ({ target }) => {
@@ -40,8 +40,8 @@ export const RegisterProduct = () => {
         const response = await actions.registerProduct(formData)
 
         if (response === 201) {
-            setProduct(initialProduct)  
-            fileInputRef.current.value = null  
+            setProduct(initialProduct)
+            fileInputRef.current.value = null
             alert("Producto registrado exitosamente")
         } else {
             alert("Error al registrar el producto")
@@ -49,92 +49,97 @@ export const RegisterProduct = () => {
     }
 
     return (
-        <div className="container">
-            <form className="row g-3">
-                <h1 className="text-center">Registro de productos</h1>
-                <div className="row mb-3">
+        <div className="container d-flex justify-content-center mt-5 ">
+            <form className=" row g-3 border p-4 " style={{ "width": "550px" }}>
+                <h1 className="col-12 border text-center" >Registro de productos</h1>
+                <div className="col-md-2">
                     <label htmlFor="inputNombre" className="col-sm-2 col-form-label">Nombre</label>
-                    <div className="col-md-6">
-                        <input
-                            type="text"
-                            className="form-control"
-                            id="inputNombre"
-                            name="name"
-                            value={product.name}
-                            onChange={handleChange}
-                        />
-                    </div>
                 </div>
-                <div className="row mb-3">
-                    <label htmlFor="inputDescription" className="col-sm-2 col-form-label">Descripcion</label>
-                    <div className="col-md-6">
-                        <input
-                            type="text"
-                            className="form-control"
-                            id="inputDescription"
-                            name="description"
-                            value={product.description}
-                            onChange={handleChange}
-                        />
-                    </div>
+                <div className="col-md-10">
+                    <input
+                        type="text"
+                        className="form-control w-100"
+                        id="inputNombre"
+                        name="name"
+                        value={product.name}
+                        onChange={handleChange}
+                        style={{ "width": "100%" }}
+                    />
+
                 </div>
-                <div className="row mb-3">
+
+                <div className="col-md-2">
+                    <label htmlFor="inputDescription" className="col-sm-2 col-form-label ">Descripcion</label>
+                </div>
+                <div className="col-md-10">
+                    <input
+                        type="text"
+                        className="form-control w-100"
+                        id="inputDescription"
+                        name="description"
+                        value={product.description}
+                        onChange={handleChange}
+                    />
+                </div>
+
+                <div className="col-md-2">
                     <label htmlFor="inputGroupFile01" className="col-sm-2 col-form-label">Imagen</label>
-                    <div className="col-md-6">
-                        <div className="input-group mb-3">
-                            <input
-                                type="file"
-                                className="form-control"
-                                id="inputGroupFile02"
-                                onChange={handleFile}
-                                ref={fileInputRef} 
-                            />
-                        </div>
+                </div>
+                <div className="col-md-10">
+                    <div className="input-group mb-3">
+                        <input
+                            type="file"
+                            className="form-control w-100"
+                            id="inputGroupFile02"
+                            onChange={handleFile}
+                            ref={fileInputRef}
+                        />
                     </div>
                 </div>
-                <div className="row mb-3">
+                <div className="col-md-2">
                     <label htmlFor="inputState" className="form-label col-sm-2">Category</label>
-                    <div className="col-md-2">
-                        <select
-                            id="inputState"
-                            className="form-select"
-                            onChange={handleChange}
-                            name="category"
-                            value={product.category}>
-                            <option value="default">Choose...</option>
-                            <option value="1">Dulces Y golosinas</option>
-                            <option value="2">Carnes</option>
-                            <option value="3">Enlatados</option>
-                            <option value="4">Frutas</option>
-                            <option value="5">Huevos y Lacteos</option>
-                            <option value="6">Verduras</option>
-                            <option value="7">Bebidas</option>
-                        </select>
-                    </div>
                 </div>
-                <div className="row mb-3">
+                <div className="col-md-10">
+                    <select
+                        id="inputState"
+                        className="form-select w-50"
+                        onChange={handleChange}
+                        name="category"
+                        value={product.category}>
+                        <option value="default">Choose...</option>
+                        <option value="1">Dulces Y golosinas</option>
+                        <option value="2">Carnes</option>
+                        <option value="3">Enlatados</option>
+                        <option value="4">Frutas</option>
+                        <option value="5">Huevos y Lacteos</option>
+                        <option value="6">Verduras</option>
+                        <option value="7">Bebidas</option>
+                    </select>
+                </div>
+
+                <div className="col-md-2">
                     <label htmlFor="inputState" className="form-label col-sm-2">Precio</label>
-                    <div className="col-md-2">
-                        <div className="input-group">
-                            <input
-                                type="number"
-                                className="form-control inputNumber"
-                                style={{ "appearance": "textfield" }}
-                                aria-label="Dollar amount (with dot and two decimal places)"
-                                onChange={handleChange}
-                                name="price"
-                                value={product.price}
-                            />
-                            <span className="input-group-text">$</span>
-                        </div>
+                </div>
+                <div className="col-md-10">
+                    <div className="input-group w-50">
+                        <input
+                            type="number"
+                            className="form-control inputNumber "
+                            style={{ "appearance": "textfield" }}
+                            aria-label="Dollar amount (with dot and two decimal places)"
+                            onChange={handleChange}
+                            name="price"
+                            value={product.price}
+                        />
+                        <span className="input-group-text">$</span>
                     </div>
                 </div>
-                <div className="col-12">
+                <div className="col-12 d-flex justify-content-center">
                     <button
                         type="submit"
-                        className="btn btn-primary"
+                        className="btn btn-primary "
                         onClick={handleSubmit}
-                    >Registrar</button>
+                    >Registrar Producto</button>
                 </div>
             </form>
         </div>

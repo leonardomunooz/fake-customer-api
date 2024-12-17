@@ -17,6 +17,7 @@ import cloudinary
 import cloudinary.uploader as uploader
 
 from flask_jwt_extended import create_access_token, jwt_required
+from flask_jwt_extended import get_jwt_identity
 
 # libreria para generar hash
 from werkzeug.security import generate_password_hash, check_password_hash 
@@ -111,6 +112,7 @@ def update_user(user_id):
        
 
 @api.route('/login', methods = ["POST"])
+
 def login():
     data = request.json
 
@@ -129,8 +131,10 @@ def login():
 
         if check_password(user.password, password, user.salt):
             # al token se le pasa un identity, un valor unequivoco
+            print(user.id)
             converted_id = str(user.id)
             token  = create_access_token(identity=converted_id)
+     
             return jsonify({
                 "token":token,
                 "api_key" : user.api_key
@@ -242,22 +246,28 @@ def add_product_category():
 
 
 
+
 # GET  /products 
 
 @api.route('/products', methods = ['GET'])
 @jwt_required()
 def get_products():
+    header = request.headers.get('x-api_key')
 
-    body = request.form
-    api_key = body.get("api_key")
+    current_user_id = get_jwt_identity()
     
     user  = User()
-    user = user.query.filter_by(api_key = api_key).one_or_none()
+    user = user.query.get(current_user_id)
 
-    if user is None:
-        return jsonify("Missing authorization API"), 401
-    else :
+    print(user.api_key)
+    print(header)
+
+    if user.api_key == header:
         product = Product()
         product = product.query.all()
         product = list(map(lambda product : product.serialize(), product))
         return jsonify(product),200
+    else : 
+        return jsonify("Missing authorization API"), 401
+
+        

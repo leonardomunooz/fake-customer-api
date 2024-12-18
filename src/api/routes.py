@@ -250,19 +250,13 @@ def add_product_category():
 # GET  /products 
 
 @api.route('/products', methods = ['GET'])
-@jwt_required()
+
 def get_products():
-    header = request.headers.get('x-api_key')
-
-    current_user_id = get_jwt_identity()
-    
+    api_key = request.headers.get('x-api_key')    # extrae los datos de la cabecera del cliente
     user  = User()
-    user = user.query.get(current_user_id)
+    user = user.query.filter_by(api_key = api_key).first()
 
-    print(user.api_key)
-    print(header)
-
-    if user.api_key == header:
+    if user.api_key == api_key:
         product = Product()
         product = product.query.all()
         product = list(map(lambda product : product.serialize(), product))

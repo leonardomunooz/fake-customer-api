@@ -75,6 +75,22 @@ const getState = ({ getStore, getActions, setStore }) => {
 				} catch (error) {
 					console.log(error)
 				}
+			},
+			getProducts: async () => {
+
+				const token = getStore({token})
+				try {
+					const response  = await fetch(`${process.env.BACKEND_URL}/api/product`,{
+						method : "GET",
+						headers : {
+							
+							"Authorization" : `Bearer  ${api_key}`
+						}
+					
+					})
+				}catch(error) {
+					console.log(error)
+				}
 			}
 		}
 	};

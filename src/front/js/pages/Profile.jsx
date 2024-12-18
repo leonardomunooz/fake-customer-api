@@ -9,6 +9,8 @@ export const Profile = () => {
     const { store, actions } = useContext(Context)
     // const navigate = useNavigate()
 
+    actions.getProducts()
+
 
     return (
         <div className="container">

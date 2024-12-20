@@ -24,8 +24,7 @@ class User(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "email": self.email,
-            "api_key" : self.api_key
+            "email": self.email
             # do not serialize the password, its a security breach
         }
 
@@ -37,6 +36,11 @@ class FavoriteProduct(db.Model):
     
     user = db.relationship("User")
     product = db.relationship("Product")
+
+    def serialize(self):
+        return {
+            "product" : self.product.serialize()
+        }
     
 
 class Product(db.Model):
@@ -47,7 +51,6 @@ class Product(db.Model):
     price = db.Column(db.Float, nullable = True)
     imagen = db.Column(db.String(255), nullable = False, default = "https://miro.medium.com/v2/resize:fit:1400/1*K4LP6vY33IGyF4TrJaDomA.png")
     imagen_id = db.Column(db.String(200), nullable =True)
-    api_key = db.Column(db.String(200), nullable = True)
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = False)
     user = db.relationship("User")
@@ -61,7 +64,8 @@ class Product(db.Model):
             "name": self.name,
             "description": self.description,
             "price": self.price,
-            "user": self.imagen
+            "url_image": self.imagen,
+            "imagen_id" : self.imagen_id
             # "product_categories": self.product_categories
         }
 
@@ -90,7 +94,7 @@ class Category(db.Model):
     product_categories = db.relationship("ProductCategory", back_populates= "category")
 
     def __repr__(self):
-        return f'Category {self.name} id {self.id}' 
+        return f'Category {self.id} id {self.name}' 
         # return f'Category {self.name} id {self.id}'
 
     def serialize(self):

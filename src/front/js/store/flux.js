@@ -1,8 +1,8 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-			token : sessionStorage.getItem("token",) || null,
-			api_key : null  
+			token : sessionStorage.getItem("token") || null,
+			api_key : sessionStorage.getItem('apiKey') || null  
 		},
 		actions: {
 			register : async (user)  => {
@@ -49,7 +49,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 							token : data.token,
 							api_key : data.api_key
 						})
+
 						sessionStorage.setItem('token', data.token)
+						sessionStorage.setItem('apiKey', data.api_key)
 						return true
 					}else {
 						return false
@@ -61,14 +63,19 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			logout : () => {
 				setStore({
-					token : null	
+					token : null,
+					api_key : null
 				})
 				sessionStorage.removeItem("token")
+				sessionStorage.removeItem("apiKey")
 			},
 			registerProduct : async (product) => {
 				try {
 					const response  = await fetch(`${process.env.BACKEND_URL}/api/product`,{
 						method : "POST",
+						headers : {
+							"Authorization" : `Bearer ${getStore().token}`
+						},
 						body :  product
 					})
 					return response.status				
@@ -83,8 +90,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const response  = await fetch(`${process.env.BACKEND_URL}/api/product`,{
 						method : "GET",
 						headers : {
-							
-							"Authorization" : `Bearer  ${api_key}`
+							"Authorization" : `Bearer ${getStore().api_key}`
 						}
 					
 					})

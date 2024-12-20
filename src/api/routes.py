@@ -2,14 +2,13 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Product, Category, ProductCategory
+from api.models import db, User, Product, Category, ProductCategory,FavoriteProduct
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from base64 import b64encode
 import os
 import uuid
 import secrets
-
 
 
 
@@ -33,6 +32,12 @@ api = Blueprint('api', __name__)
 # Allow CORS requests to this API
 CORS(api)
 
+@api.route('/population/products', methods = ["POST"])
+def population_products():
+
+    print(pd) 
+    return jsonify([]), 200
+
 @api.route('/user', methods = ["GET"])
 @jwt_required() # con este decorador si o si hay que mandar token para acceder
 def get_users():
@@ -45,9 +50,7 @@ def get_users():
 @api.route('/user', methods = ['POST'])
 def add_user():
 
-
     body = request.json
-
     body_email = body.get("email", None)
     body_password = body.get("password", None)
 
@@ -76,14 +79,10 @@ def add_user():
             db.session.rollback()
             return jsonify({"Message":f"error : {error}"}), 500
 
-        
-
-#
 @api.route('/user/<int:user_id>', methods = ['PUT'])
 
 def update_user(user_id):
     body = request.json
-    
 
     body_email = body.get('email', None)
     body_password = body.get("password", None)
@@ -114,8 +113,8 @@ def update_user(user_id):
 @api.route('/login', methods = ["POST"])
 
 def login():
-    data = request.json
 
+    data = request.json
     email =  data.get("email", None)
     password = data.get("password", None)
 
@@ -149,11 +148,16 @@ def login():
 
 # POST  /product add a product
 
-@api.route("/product", methods = ["POST"]) 
+@api.route("/product", methods = ["POST"])
+@jwt_required()
 def add_product():
     
     data_form = request.form 
     data_files = request.files
+    current_id  =  get_jwt_identity()
+
+    user = User.query.get(current_id)
+    print(user.id)
     
     name  = data_form.get("name", None)
     description = data_form.get("description", None)
@@ -176,7 +180,7 @@ def add_product():
                 name=name,
                 description=description,
                 price=price,
-                user_id=1,
+                user_id=user.id,
                 imagen = result_cloud['secure_url'],
                 imagen_id = result_cloud['public_id']  # Este valor esta cableado. modificar !!!!!
             )
@@ -240,28 +244,55 @@ def add_product_category():
         db.session.add(product_category)
 
     db.session.commit()
-    
 
     return jsonify([]), 200
-
-
-
 
 # GET  /products 
 
 @api.route('/products', methods = ['GET'])
 
 def get_products():
-    api_key = request.headers.get('x-api_key')    # extrae los datos de la cabecera del cliente
+    api_key = request.headers.get('x-api-key')  # extrae los datos de la cabecera del cliente
     user  = User()
     user = user.query.filter_by(api_key = api_key).first()
 
-    if user.api_key == api_key:
-        product = Product()
-        product = product.query.all()
-        product = list(map(lambda product : product.serialize(), product))
-        return jsonify(product),200
-    else : 
-        return jsonify("Missing authorization API"), 401
+    if user is None: 
+        return jsonify({"message" : "User not found"}),400
+    else :
+        if user.api_key == api_key:
+            product = Product()
+            product = product.query.all()
+            product = list(map(lambda product : product.serialize(), product))
+            return jsonify(product),200
+        else : 
+            return jsonify("Missing authorization API"), 401    
 
+
+
+# Product Detail
+
+@api.route('/product/<int:theid>', methods = ['GET'])
+def product_detail(theid=None):
+
+    if theid is not None:
+        product = Product.query.get(theid)
         
+        if product is None:
+            return jsonify([{"Error" :  "Product not found"}]),404
+        else :
+            return jsonify(product.serialize()), 200
+            
+    else:
+        return jsonify("no existe el producto"),404 
+    
+
+
+# user's favorite products
+
+@api.route('/user/favorite', methods = ['GET'])
+def user_favorites():
+    return jsonify([]),200
+
+@api.route('/user/favorite', methods = ['POST'])
+def add_favorites():
+    return jsonify([]),200

@@ -276,7 +276,7 @@ def product_detail(theid=None):
 
     if theid is not None:
         product = Product.query.get(theid)
-        
+
         if product is None:
             return jsonify([{"Error" :  "Product not found"}]),404
         else :
@@ -289,9 +289,16 @@ def product_detail(theid=None):
 
 # user's favorite products
 
-@api.route('/user/favorite', methods = ['GET'])
-def user_favorites():
-    return jsonify([]),200
+@api.route('/favorite/user/<int:theid>', methods = ['GET'])
+def user_favorites(theid = None):
+
+        # Listar los favoritos de un usuario
+
+        user  = User.query.get(theid)
+        if user is None:
+            return jsonify([{"Error" : "User not found"}]),404
+        else:
+            return jsonify(user.serialize()),200
 
 @api.route('/user/favorite', methods = ['POST'])
 def add_favorites():

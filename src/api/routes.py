@@ -35,7 +35,7 @@ CORS(api)
 @api.route('/population/products', methods = ["POST"])
 def population_products():
 
-    print(pd) 
+    # print(pd) 
     return jsonify([]), 200
 
 @api.route('/user', methods = ["GET"])
@@ -247,59 +247,79 @@ def add_product_category():
 
     return jsonify([]), 200
 
-# GET  /products 
+
+
+# GET  /products   :  all products
 
 @api.route('/products', methods = ['GET'])
 
 def get_products():
     api_key = request.headers.get('x-api-key')  # extrae los datos de la cabecera del cliente
-    user  = User()
-    user = user.query.filter_by(api_key = api_key).first()
+
+    user = User.query.filter_by(api_key = api_key).first()
 
     if user is None: 
-        return jsonify({"message" : "User not found"}),400
+        return jsonify("Missing authorization API"), 401  
     else :
-        if user.api_key == api_key:
             product = Product()
             product = product.query.all()
             product = list(map(lambda product : product.serialize(), product))
-            return jsonify(product),200
-        else : 
-            return jsonify("Missing authorization API"), 401    
+            return jsonify([product]),200
+              
 
-
-
-# Product Detail
+# GET  /product/<int> :  product detail by id 
 
 @api.route('/product/<int:theid>', methods = ['GET'])
-def product_detail(theid=None):
+def product_detail(theid = None):
 
-    if theid is not None:
-        product = Product.query.get(theid)
+    if theid is None:
+        return jsonify({"Error" : "missing parameters"}), 400
+    else :
+        
+        api_key = request.headers.get('x-api-key')
+        user = User.query.filter_by(api_key = api_key).first()
 
-        if product is None:
-            return jsonify([{"Error" :  "Product not found"}]),404
-        else :
-            return jsonify(product.serialize()), 200
-            
-    else:
-        return jsonify("no existe el producto"),404 
+        if user is not  None:
+            product = Product.query.get(theid)
+            if product is None:
+                return jsonify([{"Error" :  "Product not found"}]),404
+            else :
+                return jsonify(product.serialize()), 200  
+        else : 
+            return jsonify("Missing authorization API"), 401        
     
 
+# POST /favorite/user/{id}/product/{id}  :  add a favorite product
 
-# user's favorite products
-
-@api.route('/favorite/user/<int:theid>', methods = ['GET'])
-def user_favorites(theid = None):
-
-        # Listar los favoritos de un usuario
-
+@api.route('/favorite/user/<int:theid>/product/<int:product_id>', methods = ['POST'])
+def add_favorites(theid, product_id):
+    
+        api_key = request.headers.get('x-api-key')
         user  = User.query.get(theid)
+        product = Product.query.get(product_id)
+        
         if user is None:
-            return jsonify([{"Error" : "User not found"}]),404
+             return jsonify("Missing authorization API"), 401
         else:
-            return jsonify(user.serialize()),200
+                try: 
+                    user_favorite =  FavoriteProduct(user_id = user.id, product_id =product.id)
+                    db.session.add(user_favorite)
+                    db.session.commit()
+                    return jsonify("favorito guardado exitosamente"), 201
+                except Exception as error:
+                    db.session.rollback()
+                    print(error)
+        
+# GET /favorite/user/{id}  : Get the user's favorite products
+@api.route('/favorite/user/<int:theid>', methods = ['GET'])
+def user_favorites(theid= None):
 
-@api.route('/user/favorite', methods = ['POST'])
-def add_favorites():
-    return jsonify([]),200
+        api_key = request.headers.get('x-api-key')
+        user  = User.query.get(theid)
+        if user is not  None:
+            if user.api_key == api_key:
+               return jsonify(user.serialize()),200
+            else: 
+                return jsonify("Missing authorization API"), 401 
+        else:
+            return jsonify([{"Error" : "User not found"}]),404

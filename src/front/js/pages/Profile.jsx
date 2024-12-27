@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Context } from "../store/appContext";
-import { Navigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { Navbar } from "../component/navbar";
 
 import logo from "../../img/logo.png"
@@ -27,6 +27,12 @@ export const Profile = () => {
                             <label htmlFor="apiKey"> Api Key : </label>
                             <p className="d-inline-block border  p-1" id="apiKey" > {store.api_key}</p>
                         </h4>
+                        <div className="m-auto border col-12">
+                            <h4 className="text-center" >Documentacion</h4>
+                            <Link to='/docs'>
+                                <p className="text-center">https://upgraded-telegram-r4xv44x654xcxp6g-3000.app.github.dev/docs</p>
+                            </Link>
+                        </div>
                     </div> :
                     <Navigate to="/login" />
 

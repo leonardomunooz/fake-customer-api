@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, Navigate } from "react-router-dom"
 import { Context } from "../store/appContext"
+import Swal from 'sweetalert2'
 
 
 const initialUser = {
@@ -26,16 +27,31 @@ const Signup = () => {
     const handleSubmit = async () => {
 
         if (user.email.trim() == "" || user.password.trim() == "") {
-            console.log("No se pueden enviar elementos vacios")
+           
+
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "There can be no blank spaces",
+              
+            });
             return
         } else {
             const response = await actions.register(user)
 
             if (response) {
-                console.log('Usuario Creado correctamente')
+                Swal.fire({
+                    title: "product successfully registered",
+                    icon: "success",
+                    draggable: true
+                });
                 setUser(initialUser)
             } else {
-                console.log('El usuario ya existe')
+                Swal.fire({
+                    icon: "error",
+                    text: "User already exits",
+
+                });
             }
         }
 

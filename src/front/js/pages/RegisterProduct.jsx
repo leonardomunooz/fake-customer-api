@@ -1,6 +1,7 @@
 import React, { useState, useContext, useRef } from "react"
 import { Context } from "../store/appContext"
 import { Navigate } from "react-router-dom"
+import Swal from 'sweetalert2'
 
 
 const initialProduct = {
@@ -40,11 +41,12 @@ export const RegisterProduct = () => {
         formData.append("category", product.category)
         formData.append("imagen", product.imagen)
         const response = await actions.registerProduct(formData)
-
-        if (response === 201) {
+        console.log(response)
+        if (response) {
             setProduct(initialProduct)
             fileInputRef.current.value = null
             alert("Producto registrado exitosamente")
+
         } else {
             alert("Error al registrar el producto")
         }
@@ -146,7 +148,7 @@ export const RegisterProduct = () => {
                             >Registrar Producto</button>
                         </div>
                     </form> :
-                            <Navigate to="/login" />
+                    <Navigate to="/login" />
             }
         </div>
 
@@ -156,3 +158,6 @@ export const RegisterProduct = () => {
     )
 
 }
+
+
+

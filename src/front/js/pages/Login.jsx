@@ -25,13 +25,23 @@ const Login = () => {
     }
     const handleSubmit = async (e) => {
         if (user.email.trim() == "" || user.password.trim() == "") {
-            console.log("No se pueden enviar elementos vacios")
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "There can be no blank spaces",
+            });
             return
         } else {
             const response = await actions.login(user)
-            
-            if(response){
+
+            if (response) {
                 navigate('/profile')
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "You must register"
+                });
             }
         }
     }

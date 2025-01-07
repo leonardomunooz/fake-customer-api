@@ -41,12 +41,11 @@ export const RegisterProduct = () => {
         formData.append("category", product.category)
         formData.append("imagen", product.imagen)
         const response = await actions.registerProduct(formData)
-        console.log(response)
+
         if (response) {
             setProduct(initialProduct)
             fileInputRef.current.value = null
             alert("Producto registrado exitosamente")
-
         } else {
             alert("Error al registrar el producto")
         }
@@ -151,9 +150,6 @@ export const RegisterProduct = () => {
                     <Navigate to="/login" />
             }
         </div>
-
-
-
 
     )
 

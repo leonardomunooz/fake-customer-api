@@ -9,4 +9,9 @@
 .inputNumber{
     appearance: textfield;
 }
-
+.custom-syntaxHighlither {
+    border: solid #d4d4d8 1px;
+    min-height: 50px;
+    max-height: 250px;
+    overflow-y: scroll;
+}

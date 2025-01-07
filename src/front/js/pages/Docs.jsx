@@ -1,10 +1,7 @@
 import React from "react"
-import { Navbar } from "../component/navbar"
-
 import SyntaxHighlighter from 'react-syntax-highlighter';
-import { atomOneDark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
-import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
+import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { Title } from "../component/Title.jsx";
 
 
@@ -92,6 +89,44 @@ export const Docs = () => {
     ],
     "id": 1
 }`;
+
+    const addfavorites = `
+    # You have to pass the api key in the header of the request.
+    # You can find an api key from the profile page once you log in.
+
+    # Example
+    headers : {
+        x-api-key : "265e986a8swweq3e23b2bfd107f23f519f404f7aaf6d7b8207d9080"
+    }
+`
+
+    const getFavorite = `
+{
+    "email": "leonardo",
+    "favorites": [
+        {
+            "product ": {
+                "description": "Fruto de sabor jugoso y ligeramente ácido, ideal para ensaladas",
+                "id": 70,
+                "imagen_id": "swaegsn0pacqd09i6uln",
+                "name": "Tomates",
+                "price": 2.0,
+                "url_image": "https://res.cloudinary.com/ddpeqlckw/image/upload/v1736193412/swaegsn0pacqd09i6uln.png"
+            }
+        },
+        {
+            "product ": {
+                "description": "Fruta cítrica jugosa y refrescante, rica en vitamina C.",
+                "id": 60,
+                "imagen_id": "xsvxeyfhtyjvlltjiwwq",
+                "name": "Naranjas",
+                "price": 2.5,
+                "url_image": "https://res.cloudinary.com/ddpeqlckw/image/upload/v1736193161/xsvxeyfhtyjvlltjiwwq.png"
+            }
+        }
+    ],
+    "id": 1
+}`
     return (
 
         <div className="container">
@@ -104,6 +139,7 @@ export const Docs = () => {
                         url="[Get] https://upgraded-telegram-r4xv44x654xcxp6g-3001.app.github.dev/api/products"
                     />
                     <SyntaxHighlighter
+                        className="custom-syntaxHighlither"
                         language="json"
                         style={docco}
                         wrapLines
@@ -115,10 +151,11 @@ export const Docs = () => {
 
                     <Title
                         Title="Get a single Product"
-                        url="[Get] https://upgraded-telegram-r4xv44x654xcxp6g-3001.app.github.dev/api/product/2"
+                        url="[Get] https://upgraded-telegram-r4xv44x654xcxp6g-3001.app.github.dev/api/product_by/70"
                     />
 
                     <SyntaxHighlighter
+                        className="custom-syntaxHighlither"
                         language="json"
                         style={docco}
                         wrapLines
@@ -127,13 +164,14 @@ export const Docs = () => {
                     </SyntaxHighlighter>
                 </div>
                 <div className="col-12">
-            
+
                     <Title
                         Title="Get user favorites by id"
                         url="[Get] https://upgraded-telegram-r4xv44x654xcxp6g-3001.app.github.dev/api/favorite/user/3"
                     />
 
                     <SyntaxHighlighter
+                        className="custom-syntaxHighlither"
                         languaje="json"
                         style={docco}
                         wrapLines
@@ -141,8 +179,51 @@ export const Docs = () => {
                         {favorites}
                     </SyntaxHighlighter>
                 </div>
-            </div>
 
+                <div className="col-12">
+                    <Title
+                        Title="Add user favorites by id"
+                        url="[POST]  https://upgraded-telegram-r4xv44x654xcxp6g-3001.app.github.dev/api/favorite/user/1/product/70"
+                    />
+                    <p className="fw-bold">Request</p>
+                    <SyntaxHighlighter
+                        className="custom-syntaxHighlither"
+                        languaje="json"
+                        style={docco}
+                        wrapLines
+                    >
+                        {addfavorites}
+                    </SyntaxHighlighter>
+
+                    <p className="fw-bold" >Response</p>
+
+                    <SyntaxHighlighter
+                        className="custom-syntaxHighlither"
+                        languaje="json"
+                        style={docco}
+                        wrapLines
+                    >
+                        {`{"Msg : "product successfully added to favorites"}`}
+                    </SyntaxHighlighter>
+                </div>
+
+                <div className="col-12">
+                    <Title
+                        Title="Get user favorites"
+                        url="[Get] https://upgraded-telegram-r4xv44x654xcxp6g-3001.app.github.dev/api/favorite/user/1"
+                    />
+
+                    <SyntaxHighlighter
+                        className="custom-syntaxHighlither"
+                        languaje="json"
+                        style={docco}
+                        wrapLines
+                    >
+                        {getFavorite}
+                    </SyntaxHighlighter>
+                </div>
+
+            </div>
         </div >
     )
 }

@@ -4,6 +4,8 @@ import { Context } from "../store/appContext"
 import Swal from 'sweetalert2'
 
 
+
+
 const initialUser = {
     "email": "",
     "password": ""
@@ -27,13 +29,13 @@ const Signup = () => {
     const handleSubmit = async () => {
 
         if (user.email.trim() == "" || user.password.trim() == "") {
-           
+
 
             Swal.fire({
-              icon: "error",
-              title: "Oops...",
-              text: "There can be no blank spaces",
-              
+                icon: "error",
+                title: "Oops...",
+                text: "There can be no blank spaces",
+
             });
             return
         } else {
@@ -41,7 +43,7 @@ const Signup = () => {
 
             if (response) {
                 Swal.fire({
-                    title: "product successfully registered",
+                    title: "User successfully registered",
                     icon: "success",
                     draggable: true
                 });
@@ -50,7 +52,6 @@ const Signup = () => {
                 Swal.fire({
                     icon: "error",
                     text: "User already exits",
-
                 });
             }
         }

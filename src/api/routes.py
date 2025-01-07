@@ -2,13 +2,18 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
+import json
 from api.models import db, User, Product, Category, ProductCategory,FavoriteProduct
-from api.utils import generate_sitemap, APIException
+from api.utils import generate_sitemap, APIException, send_email
 from flask_cors import CORS
 from base64 import b64encode
 import os
-import uuid
 import secrets
+
+from datetime import timedelta
+# from api import datoss
+
+
 
 
 
@@ -32,11 +37,7 @@ api = Blueprint('api', __name__)
 # Allow CORS requests to this API
 CORS(api)
 
-@api.route('/population/products', methods = ["POST"])
-def population_products():
 
-    # print(pd) 
-    return jsonify([]), 200
 
 @api.route('/user', methods = ["GET"])
 @jwt_required() # con este decorador si o si hay que mandar token para acceder
@@ -142,9 +143,23 @@ def login():
             return jsonify("No tienes permiso"),400
 
 
+@api.route('/population/products', methods = ["POST"])
+def add_population_product():
+    try:
+        with open('../api/datos.json', 'r') as f:
+            data = json.load(f)
+    except FileNotFoundError:
+        print("El archivo datos.json no se encontró.")
+        data = {}  # O puedes crear un diccionario por defecto
+    except json.JSONDecodeError:
+        print("Error al decodificar el archivo JSON.")
+        data = {}
+    print(data)
+
+
+    return jsonify([]), 200
 
 #  A partir de aqui, se muestra las rutas  de los productos 
-
 
 # POST  /product add a product
 
@@ -171,6 +186,7 @@ def add_product():
     else:
          
         result_cloud = uploader.upload(imagen)
+        print(result_cloud.get('secure_url'))
       
         # print()
         # return jsonify(result_cloud["url"])
@@ -269,13 +285,13 @@ def get_products():
 
 # GET  /product/<int> :  product detail by id 
 
-@api.route('/product/<int:theid>', methods = ['GET'])
+@api.route('/product_by/<int:theid>', methods = ['GET'])
 def product_detail(theid = None):
 
     if theid is None:
         return jsonify({"Error" : "missing parameters"}), 400
     else :
-        
+
         api_key = request.headers.get('x-api-key')
         user = User.query.filter_by(api_key = api_key).first()
 
@@ -305,7 +321,7 @@ def add_favorites(theid, product_id):
                     user_favorite =  FavoriteProduct(user_id = user.id, product_id =product.id)
                     db.session.add(user_favorite)
                     db.session.commit()
-                    return jsonify("favorito guardado exitosamente"), 201
+                    return jsonify({"Msg": "product successfully added to favorites"}), 201
                 except Exception as error:
                     db.session.rollback()
                     print(error)
@@ -323,3 +339,58 @@ def user_favorites(theid= None):
                 return jsonify("Missing authorization API"), 401 
         else:
             return jsonify([{"Error" : "User not found"}]),404
+        
+
+# ruta para resetear el password 
+
+expires_in_minutes = 10
+expires_delta = timedelta(minutes =expires_in_minutes)
+
+@api.route("/reset-password", methods=["POST"])
+def reset_password():
+    body = request.json
+    access_token  = create_access_token(identity=body, expires_delta=expires_delta)
+
+    message = f"""
+        <h1>
+            Password recovery
+            <a href ="{os.getenv('FRONTEND_URL')}/password-update?token={access_token}">
+                recovery
+            </a>
+        </h1>
+    """
+    data  = {
+        "subject" : "Password recovery message",
+        "to" : body,
+        "message" : message 
+    }
+
+    sended_email = send_email(data.get("subject"), data.get("to"), data.get("message"))
+
+    print(sended_email)
+
+    return jsonify("hola,mundo"),200
+
+
+
+@api.route('/update-password', methods = ["PUT"])
+@jwt_required()
+def update_pass():
+    email = get_jwt_identity()
+    body_password = request.json
+
+    user = User.query.filter_by(email=email).one_or_none()
+
+    if user is not None:
+        salt = b64encode(os.urandom(32)).decode('utf-8')
+        password = set_password(body_password,salt)
+
+        user.salt = salt
+        user.password = password
+
+        try:
+            db.session.commit()
+            return jsonify("Password actualizada"), 201
+        except Exception as error: 
+            print(error.args)
+            return jsonify("No se puede actualizar el password"), 400

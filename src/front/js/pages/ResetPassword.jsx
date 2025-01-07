@@ -10,31 +10,31 @@ const ResetPassword = () => {
     const [user, setUser] = useState(initialUser)
     const { actions } = useContext(Context)
     const navigate = useNavigate()
+    const [email, setEmail] = useState("")
 
-    const handleChange = ({target}) => {
-        setUser({
-            ...user,
-            [target.name]: target.value
-        })
-        
+    const handleChange = ({ target }) => {
+        setEmail(target.value)
+
     }
     const handleSubmit = async (e) => {
-        
-        if (user.email.trim()== ""){
-            console.log("No se pueden enviar elementos vacios") 
+
+        if (email.trim() == "") {
+            console.log("No se pueden enviar elementos vacios")
             return
-        }else{
-            console.log('Programar funcionalidad')
+        } else {
+
+            actions.resetPassword(email)
+
         }
     }
 
     return (
 
         <div className="container m-auto " style={{ "width": "600px" }}>
-           <div className="row">
+            <div className="row">
                 <h1 className='col-12 text-center mt-5'> ¿Olvidaste tu contrasena? </h1>
-                <p className='col-12 text-center'> ¿Recuerdas tu contrasena? <Link  to={"/login"}>Login here</Link> </p>
-           </div>
+                <p className='col-12 text-center'> ¿Recuerdas tu contrasena? <Link to={"/login"}>Login here</Link> </p>
+            </div>
             <form className="row" onClick={(e) => e.preventDefault()}>
                 <div className="col-12">
                     <div className="mb-3">
@@ -45,7 +45,7 @@ const ResetPassword = () => {
                             className="form-control"
                             placeholder="Example input email"
                             name="email"
-                            value={user.email}
+                            value={email}
                             onChange={handleChange} />
                     </div>
                 </div>

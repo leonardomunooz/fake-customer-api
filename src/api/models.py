@@ -51,7 +51,7 @@ class Product(db.Model):
     description = db.Column(db.String(255), nullable = True)
     price = db.Column(db.Float, nullable = True)
     imagen = db.Column(db.String(255), nullable = False, default = "https://miro.medium.com/v2/resize:fit:1400/1*K4LP6vY33IGyF4TrJaDomA.png")
-    imagen_id = db.Column(db.String(200), nullable =True)
+    imagen_id = db.Column(db.String(200), nullable =False)
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = False)
     user = db.relationship("User")

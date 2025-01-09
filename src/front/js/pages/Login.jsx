@@ -24,6 +24,7 @@ const Login = () => {
         })
     }
     const handleSubmit = async (e) => {
+
         if (user.email.trim() == "" || user.password.trim() == "") {
             Swal.fire({
                 icon: "error",
@@ -33,15 +34,27 @@ const Login = () => {
             return
         } else {
             const response = await actions.login(user)
+            console.log(response)
 
             if (response) {
                 navigate('/profile')
-            } else {
+            }
+            if (response == 404) {
+
                 Swal.fire({
                     icon: "error",
                     title: "Oops...",
                     text: "You must register"
                 });
+            }
+            if (response == 400) {
+
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "Invalid email or password"
+                });
+
             }
         }
     }

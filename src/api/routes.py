@@ -280,7 +280,7 @@ def get_products():
             product = Product()
             product = product.query.all()
             product = list(map(lambda product : product.serialize(), product))
-            return jsonify([product]),200
+            return jsonify(product),200
               
 
 # GET  /product/<int> :  product detail by id 
@@ -352,18 +352,26 @@ def reset_password():
     access_token  = create_access_token(identity=body, expires_delta=expires_delta)
 
     message = f"""
-        <h1>
-            Password recovery
-            <a href ="{os.getenv('FRONTEND_URL')}/password-update?token={access_token}">
-                recovery
-            </a>
-        </h1>
+    
+                <div class="container">
+                    <h1>Restablece tu contraseña</h1>
+                    <p>Hemos recibido una solicitud para restablecer tu contraseña en <strong>Fake Customer Api </strong> </p>
+                    <p>Para continuar, haz clic en el siguiente botón:</p>
+                    <a href ="{os.getenv('FRONTEND_URL')}/update-password?token={access_token}">Restablecer contrasena</a>
+                    <p>Este enlace expirará en 10 min.</p>
+                    <p>Si no has solicitado este restablecimiento, por favor ignora este correo.</p>
+                    <p>Saludos,</p>
+                    <p>El equipo de <strong>Fake Customer Api </strong></p>
+                </div>  
+
     """
     data  = {
         "subject" : "Password recovery message",
         "to" : body,
         "message" : message 
     }
+
+
 
     sended_email = send_email(data.get("subject"), data.get("to"), data.get("message"))
 
@@ -394,3 +402,5 @@ def update_pass():
         except Exception as error: 
             print(error.args)
             return jsonify("No se puede actualizar el password"), 400
+    else:
+        return jsonify("Ha ocurrido un error"), 404

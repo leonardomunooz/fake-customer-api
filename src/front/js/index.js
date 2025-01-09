@@ -6,6 +6,7 @@ import ReactDOM from "react-dom";
 import "../styles/index.css";
 import "../styles/custom.css"
 
+
 //import your own components
 import Layout from "./layout";
 

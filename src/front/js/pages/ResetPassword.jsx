@@ -19,13 +19,22 @@ const ResetPassword = () => {
     const handleSubmit = async (e) => {
 
         if (email.trim() == "") {
-            console.log("No se pueden enviar elementos vacios")
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "There can be no blank spaces",
+            });
             return
-        } else {
-
-            actions.resetPassword(email)
-
         }
+        const response = await actions.resetPassword(email)
+        if (response) {
+            Swal.fire({
+                title: "Recovery email has been sent, go to your email",
+                icon: "success",
+                draggable: true
+            });
+        }
+
     }
 
     return (

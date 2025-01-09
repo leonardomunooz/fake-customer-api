@@ -1,0 +1,30 @@
+/* Estilos básicos */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+p {
+    line-height: 1.5;
+}
+
+.button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+}

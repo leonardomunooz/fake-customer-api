@@ -56,8 +56,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 						sessionStorage.setItem('apiKey', data.api_key)
 						return true
 					}else {
-						return false
+						return response.status
 					}
+
 
 				} catch (error) {
 					console.log(error)
@@ -113,8 +114,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 							body : JSON.stringify(email)
 						}
 					)
-					const data  = await response.json()
-					console.log(data)
+					
+					return response.ok
 					
 				}catch(error) {
 					console.log(error)
@@ -132,6 +133,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					})
 
 					console.log(response);
+					
+					return response.status
 					
 				}catch (error) {
 					console.log(error)

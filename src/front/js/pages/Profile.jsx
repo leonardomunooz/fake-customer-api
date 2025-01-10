@@ -5,10 +5,11 @@ import { Navbar } from "../component/navbar";
 
 import logo from "../../img/logo.png"
 
-export const Profile = () => {
+export const Profile =  () => {
     const { store, actions } = useContext(Context)
 
-    actions.getProducts()
+    // const data = await actions.getProducts()
+    // console.log(data)
 
     return (
         <div className="container">

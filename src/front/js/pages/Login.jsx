@@ -24,6 +24,7 @@ const Login = () => {
         })
     }
     const handleSubmit = async (e) => {
+        e.preventDefault()
 
         if (user.email.trim() == "" || user.password.trim() == "") {
             Swal.fire({
@@ -34,8 +35,8 @@ const Login = () => {
             return
         } else {
             const response = await actions.login(user)
-            console.log(response)
-
+           
+        
             if (response) {
                 navigate('/profile')
             }
@@ -56,14 +57,17 @@ const Login = () => {
                 });
 
             }
+
         }
+
+        return
     }
 
     return (
 
         <div className="container m-auto " style={{ "width": "600px" }}>
             <h1 className='text-center mt-5' >login</h1>
-            <form className="row" onClick={(e) => e.preventDefault()}>
+            <form className="row" >
                 <div className="col-12">
                     <div className="mb-3">
                         <label htmlFor="formGroupEmail" className="form-label">Email</label>

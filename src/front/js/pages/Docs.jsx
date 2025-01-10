@@ -1,12 +1,21 @@
-import React from "react"
+import React, { useState, useContext, useEffect } from "react"
+import { Context } from "../store/appContext.js";
 import SyntaxHighlighter from 'react-syntax-highlighter';
 
-import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import { atomOneDarkReasonable, docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { Title } from "../component/Title.jsx";
 
 
 
+
 export const Docs = () => {
+
+    const { store, actions } = useContext(Context)
+
+    console.log(store.products)
+
+
+
 
     const favorites = `{
     "email": "elelys",
@@ -127,6 +136,9 @@ export const Docs = () => {
     ],
     "id": 1
 }`
+
+
+
     return (
 
         <div className="container">
@@ -144,7 +156,15 @@ export const Docs = () => {
                         style={docco}
                         wrapLines
                     >
-                        {codeString}
+                        {
+                            store.products.map((item) => {
+                                
+                                   return (
+                                    <div><pre>{JSON.stringify(item)}</pre> </div>
+                                   )
+                                
+                            })
+                        }
                     </SyntaxHighlighter>
                 </div>
                 <div className="col-12">

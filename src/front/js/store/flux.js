@@ -2,7 +2,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
 			token : sessionStorage.getItem("token") || null,
-			api_key : sessionStorage.getItem('apiKey') || null  
+			api_key : sessionStorage.getItem('apiKey') || null,
+			products : []
 		},
 		actions: {
 			register : async (user)  => {
@@ -43,7 +44,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						body : JSON.stringify(user)
 					})
 					const data  = await response.json() 
-					// console.log(data)
+					
 
 
 					if(response.status == 200){
@@ -58,8 +59,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}else {
 						return response.status
 					}
-
-
 				} catch (error) {
 					console.log(error)
 				}
@@ -90,15 +89,26 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			getProducts: async () => {
 
-				const token = getStore({token})
+				// const token = getStore().token
+				const apiKey = getStore().api_key
 				try {
-					const response  = await fetch(`${process.env.BACKEND_URL}/api/product`,{
+					const response  = await fetch(`${process.env.BACKEND_URL}/api/products`,{
 						method : "GET",
 						headers : {
-							"Authorization" : `Bearer ${getStore().api_key}`
+							"x-api-key" : apiKey
 						}
-					
 					})
+					const body = await response.json()
+					
+
+					if(response.ok) {
+						setStore({
+							products : [...body]
+						})
+					}
+
+				
+					
 				}catch(error) {
 					console.log(error)
 				}

@@ -31,7 +31,7 @@ export const Profile =  () => {
                         <div className="m-auto border col-12">
                             <h4 className="text-center" >Documentacion</h4>
                             <Link to='/docs'>
-                                <p className="text-center">{process.env.URL_APIDOCS}</p>
+                                <p className="text-center">{process.env.FRONTEND_URL + "/docs"}</p>
                             </Link>
                         </div>
                     </div> :

@@ -11,7 +11,6 @@ export const Title = (props) => {
             <p className="border border-success border-2 py-2"> {props.url} </p>
         </div>
 
-
     )
 }
 

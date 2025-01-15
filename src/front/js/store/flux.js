@@ -106,8 +106,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 							products : [...body]
 						})
 					}
-
-				
 					
 				}catch(error) {
 					console.log(error)

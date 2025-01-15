@@ -40,7 +40,7 @@ class FavoriteProduct(db.Model):
 
     def serialize(self):
         return {
-            "product " : self.product.serialize()
+            self.id : self.product.serialize()
         }
     
 

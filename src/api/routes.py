@@ -311,20 +311,29 @@ def product_detail(theid = None):
 def add_favorites(theid, product_id):
     
         api_key = request.headers.get('x-api-key')
+
+
         user  = User.query.get(theid)
         product = Product.query.get(product_id)
-        
+        # si el usuario existe y no tiene su api key = Missing authorization Header, 401
+        # si el usuario no existe = Bad request, 400
         if user is None:
-             return jsonify("Missing authorization API"), 401
+            return jsonify("Bad request"), 400
+        
         else:
-                try: 
-                    user_favorite =  FavoriteProduct(user_id = user.id, product_id =product.id)
-                    db.session.add(user_favorite)
-                    db.session.commit()
-                    return jsonify({"Msg": "product successfully added to favorites"}), 201
-                except Exception as error:
-                    db.session.rollback()
-                    print(error)
+                if user.api_key == api_key: 
+                    try: 
+                        user_favorite =  FavoriteProduct(user_id = user.id, product_id =product.id)
+                        db.session.add(user_favorite)
+                        db.session.commit()
+                        return jsonify({
+                                "Msg": "product successfully added to favorites"
+                            }), 201
+                    except Exception as error:
+                        db.session.rollback()
+                        print(error)
+                else : 
+                    return jsonify("Missing Authorization header"), 401
         
 # GET /favorite/user/{id}  : Get the user's favorite products
 @api.route('/favorite/user/<int:theid>', methods = ['GET'])
@@ -352,7 +361,8 @@ def reset_password():
     access_token  = create_access_token(identity=body, expires_delta=expires_delta)
 
     message = f"""
-    
+                
+                
                 <div class="container">
                     <h1>Restablece tu contraseña</h1>
                     <p>Hemos recibido una solicitud para restablecer tu contraseña en <strong>Fake Customer Api </strong> </p>

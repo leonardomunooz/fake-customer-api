@@ -61,6 +61,7 @@ def send_email(subject,to,body):
             <html>
                 <body>
                     """ + body + """
+                
                 </body>
             </html>
         """

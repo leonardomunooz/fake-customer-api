@@ -13,10 +13,6 @@ import secrets
 from datetime import timedelta
 # from api import datoss
 
-
-
-
-
 import cloudinary
 import cloudinary.uploader as uploader
 
@@ -362,9 +358,8 @@ def reset_password():
 
     message = f"""
                 
-                
                 <div class="container">
-                    <h1>Restablece tu contraseña</h1>
+                    <h1 style = "font-family: sans-serif;" >Restablece tu contraseña</h1>
                     <p>Hemos recibido una solicitud para restablecer tu contraseña en <strong>Fake Customer Api </strong> </p>
                     <p>Para continuar, haz clic en el siguiente botón:</p>
                     <a href ="{os.getenv('FRONTEND_URL')}/update-password?token={access_token}">Restablecer contrasena</a>

@@ -22,7 +22,7 @@ export const Docs = () => {
 
                     <Title
                         Title="Get all Products"
-                        url="[Get] https://upgraded-telegram-r4xv44x654xcxp6g-3001.app.github.dev/api/products"
+                        url={`[Get] ${process.env.BACKEND_URL}/api/products`}
                     />
                     <Request requestText={addfavorites} />
                     <Response responseText={getProducts} />
@@ -31,7 +31,7 @@ export const Docs = () => {
 
                     <Title
                         Title="Get a single Product"
-                        url="[Get] https://upgraded-telegram-r4xv44x654xcxp6g-3001.app.github.dev/api/product_by/70"
+                        url={`[Get] ${process.env.BACKEND_URL}/api/product_by/70`}
                     />
                     <Request requestText={addfavorites} />
                     <Response responseText={productDetail} />
@@ -41,7 +41,7 @@ export const Docs = () => {
 
                     <Title
                         Title="Get user favorites by id"
-                        url="[Get] https://upgraded-telegram-r4xv44x654xcxp6g-3001.app.github.dev/api/favorite/user/3"
+                        url={`[Get] ${process.env.BACKEND_URL}/api/favorite/user/3`}
                     />
                     <Request requestText={addfavorites} />
                     <Response responseText={getUserFavorites} />
@@ -51,7 +51,7 @@ export const Docs = () => {
                 <div className="col-12">
                     <Title
                         Title="Add user favorites by id"
-                        url="[POST]  https://upgraded-telegram-r4xv44x654xcxp6g-3001.app.github.dev/api/favorite/user/1/product/70"
+                        url={`[POST] ${process.env.BACKEND_URL}/api/favorite/user/1/product/70`}
                     />
                     <Request requestText={addfavorites} />
                     <Response responseText={getMessageAddFavorites} />

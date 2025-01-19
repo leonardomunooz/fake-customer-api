@@ -1,5 +1,6 @@
 export const getProducts = `[
     {
+        "category": "string",
         "description": "String",
         "id": int,
         "imagen_id": "string",

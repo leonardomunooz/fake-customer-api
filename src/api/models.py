@@ -26,7 +26,7 @@ class User(db.Model):
             "id": self.id,
             "email": self.email,
             "favorites" : list(map(lambda item : item.serialize(), self.product_favorites))
-            # do not serialize the password, its a security breach
+    
         }
 
 class FavoriteProduct(db.Model):
@@ -52,22 +52,34 @@ class Product(db.Model):
     price = db.Column(db.Float, nullable = True)
     imagen = db.Column(db.String(255), nullable = False, default = "https://miro.medium.com/v2/resize:fit:1400/1*K4LP6vY33IGyF4TrJaDomA.png")
     imagen_id = db.Column(db.String(200), nullable =False)
-
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = False)
     user = db.relationship("User")
     product_categories = db.relationship("ProductCategory", back_populates= "product")
 
     def __repr__(self):
         return f'Product {self.name} id : {self.id}'
+    
+    # def get_categories(list):
+    #     list_items = list(map(lambda item : item.get_name(), list))
+    #     return list_items  
+
+
+
+
     def serialize(self):
+        category_list = list(map(lambda item : item.get_name(), self.product_categories))
+        category_name = category_list[0]
+
         return {
             "id" : self.id,
             "name": self.name,
             "description": self.description,
             "price": self.price,
             "url_image": self.imagen,
-            "imagen_id" : self.imagen_id
-            # "product_categories": self.product_categories
+            "imagen_id" : self.imagen_id,
+            "category" : category_name
+    
+           
         }
 
 class ProductCategory(db.Model):
@@ -80,13 +92,15 @@ class ProductCategory(db.Model):
     product = db.relationship("Product")
 
     def __repr__(self):
-        return f'id : {self.category_id} {self.category}'
+        return f'{self.category}'
 
     def serialize(self):
       return {
            "id": self.id
-            # do not serialize the password, its a security breach
         }
+    def get_name(self):
+        return self.category.serialize()
+
 
 class Category(db.Model):
     __tablename__ : "category"
@@ -96,14 +110,10 @@ class Category(db.Model):
 
     def __repr__(self):
         return f'Category {self.id} id {self.name}' 
-        # return f'Category {self.name} id {self.id}'
 
     def serialize(self):
-      return {
-            "id" : self.id,
-            "name": self.name,
-            # do not serialize the password, its a security breach
-        }
-    
+      return f'{self.name}'
+            # "id" : self.id,
+
     def get_id(self):
         return self.id

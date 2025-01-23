@@ -2,7 +2,7 @@ import React, { useContext } from "react"
 import { Context } from "../store/appContext.js";
 import SyntaxHighlighter from 'react-syntax-highlighter';
 
-import { addfavorites, getProducts, productDetail, getMessageAddFavorites, getUserFavorites } from "./datos.js";
+import { addfavorites, getProducts, productDetail, getMessageAddFavorites, getUserFavorites, getCategory } from "./datos.js";
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { Title } from "../component/Title.jsx";
 
@@ -57,21 +57,17 @@ export const Docs = () => {
                     <Response responseText={getMessageAddFavorites} />
                 </div>
 
-                {/* <div className="col-12">
+                <div className="col-12">
                     <Title
-                        Title="Get user favorites"
-                        url="[Get] https://upgraded-telegram-r4xv44x654xcxp6g-3001.app.github.dev/api/favorite/user/1"
+                        Title="Get category names"
+                        url={`[GET] ${process.env.BACKEND_URL}/api/categories`}
                     />
 
-                    <SyntaxHighlighter
-                        className="custom-syntaxHighlither"
-                        languaje="json"
-                        style={docco}
-                        wrapLines
-                    >
-                        { }
-                    </SyntaxHighlighter>
-                </div> */}
+                    <Request requestText={addfavorites} />
+                    <Response responseText={getCategory} />
+
+
+                </div>
 
             </div>
         </div >

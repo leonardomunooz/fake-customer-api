@@ -139,22 +139,6 @@ def login():
             return jsonify("No tienes permiso"),400
 
 
-@api.route('/population/products', methods = ["POST"])
-def add_population_product():
-    try:
-        with open('../api/datos.json', 'r') as f:
-            data = json.load(f)
-    except FileNotFoundError:
-        print("El archivo datos.json no se encontró.")
-        data = {}  # O puedes crear un diccionario por defecto
-    except json.JSONDecodeError:
-        print("Error al decodificar el archivo JSON.")
-        data = {}
-    print(data)
-
-
-    return jsonify([]), 200
-
 #  A partir de aqui, se muestra las rutas  de los productos 
 
 # POST  /product add a product
@@ -183,9 +167,6 @@ def add_product():
          
         result_cloud = uploader.upload(imagen)
         print(result_cloud.get('secure_url'))
-      
-        # print()
-        # return jsonify(result_cloud["url"])
         # GUARDA LA IMAGEN
         try:
             product = Product(
@@ -216,7 +197,7 @@ def add_product():
 
 # POST  /categoria Population
 
-@api.route('/categoria',methods = ['POST'])
+@api.route('/categories',methods = ['POST'])
 def add_category():
 
     category_list = ["Dulces y Golosinas","Carnes","Enlatados","Frutas","Huevos y lacteos", "Verduras", "Bebidas"]
@@ -242,6 +223,18 @@ def add_category():
     db.session.commit()
     return jsonify( {"message" : "data populated"}), 200
 
+# GET CATEGORIES 
+@api.route('/categories', methods = ['GET'])
+def get_categories():
+
+    # x_api_key = request.headers.get('x-api-key')  # extrae los datos de la cabecera del cliente
+    # user = User.query.filter_by(api_key = x_api_key).one_or_none()
+
+    category = Category.query.all()
+    category_list = list(map(lambda name : name.serialize(), category))
+    print(category_list)
+    return jsonify(category_list), 200
+     
 
 @api.route('/productCategory', methods = ['POST'])
 def add_product_category():

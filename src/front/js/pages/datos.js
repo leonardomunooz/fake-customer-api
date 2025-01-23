@@ -89,3 +89,14 @@ export const producto = {
 export const getMessageAddFavorites = `{
         "Msg": "product successfully added to favorites"
 }`
+
+
+export const getCategory = `[
+    "Dulces y Golosinas",
+    "Carnes",
+    "Enlatados",
+    "Frutas",
+    "Huevos y lacteos",
+    "Verduras",
+    "Bebidas"
+]`

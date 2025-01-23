@@ -28,6 +28,11 @@ class User(db.Model):
             "favorites" : list(map(lambda item : item.serialize(), self.product_favorites))
     
         }
+    def get_info(self):
+        return {
+            "id" : self.id,
+            "email" : self.email
+        }
 
 class FavoriteProduct(db.Model):
     __tablename__ : "favorite_product"

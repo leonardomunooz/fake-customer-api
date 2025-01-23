@@ -35,13 +35,13 @@ CORS(api)
 
 
 
+# PROTEGER ESTA RUTA
 @api.route('/user', methods = ["GET"])
-@jwt_required() # con este decorador si o si hay que mandar token para acceder
 def get_users():
 
     user  = User()
     user  = user.query.all()
-    user = list(map(lambda user : user.serialize(),user))
+    user = list(map(lambda user : user.get_info(),user))
     return jsonify(user), 200
 
 @api.route('/user', methods = ['POST'])
